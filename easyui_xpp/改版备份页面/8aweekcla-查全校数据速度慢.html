@@ -1,0 +1,878 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>班级课程表</title>
+    <script type="text/javascript" src="jquery-easyui-136/jquery.min.js"></script>
+
+    <script type="text/javascript" src="jquery-easyui-136/jquery.easyui.min.js"></script>
+    <script type="text/javascript" src="jquery-easyui-136/locale/easyui-lang-zh_CN.js"></script>
+    <script type="text/javascript" src="DataTables/datatables.js"></script>
+    <script type="text/javascript" src="../xppjs/jquery.serialize-object.js"></script>
+    <script type="text/javascript" src="../xppjs/jquery.cookie.js"></script>
+
+    <link   rel="stylesheet" type="text/css" href="jquery-easyui-136/themes/gray/easyui.css"/>
+    <link   rel="stylesheet" type="text/css" href="jquery-easyui-136/themes/icon.css"/>
+    <link   rel="stylesheet" type="text/css" href="DataTables/datatables.css"/>
+    <link href="../HMcode/HMcss/8aweek.css" rel="stylesheet" type="text/css">
+    <style>
+        .others .combo{
+            margin-left: 10px;
+            border:none;
+        }
+    </style>
+</head>
+<body>
+<div class="kb-container">
+    <!--S--左边部分-->
+    <div class="kb-left">
+        <div class="kb-title">
+            <span>课程表</span>
+            <p>在这里查看全校月、周课程表</p>
+        </div>
+        <div class="menu-list"style="display:none;">
+            <span>校区</span>
+            <div class="check-xq">
+                <label class="check-xz">
+                    <span class="el-checkbox"><input type="checkbox"></span> <i>所有校区</i>
+                </label>
+                <div class="others"id="school">
+                    <label>
+                        <span class="el-checkbox"><input type="checkbox"></span><i>共和路校区</i>
+                    </label>
+                </div>
+
+            </div>
+        </div>
+        <div class="menu-list">
+            <span>班级</span>
+            <div >
+
+                <div class="others">
+                    <input id="grade"  data-options="editable:false" class="easyui-combobox drop-down " style="width: 160px; height: 36px; display: none;" >
+
+
+                </div>
+
+            </div>
+        </div>
+        <div class="menu-list"style="display:none;">
+            <span>教室<i class="sel-arrow">▼</i></span>
+            <div class="check-xq check-box">
+
+                <div class="others">
+                    <input id="classRoom"  data-options="editable:false" class="easyui-combobox drop-down " style="width: 160px; height: 36px; display: none;" >
+
+                </div>
+
+            </div>
+        </div>
+        <div class="menu-list"style="display:none;">
+            <span>教师</span>
+            <div class="sel-teacher">
+                <span><input id="teacher"  data-options="editable:false" class="easyui-combobox drop-down " style="width: 160px; height: 36px; display: none;" ></span>
+
+            </div>
+        </div>
+    </div>
+    <!--E--左边部分-->
+
+    <!--S--右边部分-->
+    <div class="kb-right">
+        <div class="databox-title">
+            <div class="data-left">
+                <span id="date-time">2017年12月</span>
+                <i class="icon-arrow-left" id="prev">&lang;</i>
+                <i class="icon-arrow-right" id="next">&rang;</i>
+
+            </div>
+            <i class="mark-txt" id="mark-txt"></i>
+            <ul class="data-right">
+                <li>月课表</li>
+                <li class="licur">周课表</li>
+            </ul>
+        </div>
+        <div class="zt-box">
+            <span class="skz">上课中</span>
+            <span class="wsk">未上课</span>
+            <span class="yyw">已延误</span>
+            <span class="yxk">已下课</span>
+            <ul class="ztb">
+                <li class="curli">详细版</li>
+                <li>简约版</li>
+            </ul>
+        </div>
+        <!-- S--课表 -->
+        <div class="kb-bigbox">
+            <!--周课表-->
+            <div class="kb-style kb-zkb">
+                <!-- 头部日期 -->
+                <div class="bigkb-title">
+                    <span>
+                        <i class="date-z">周一</i>
+                        <em class="date-y">12/19</em>
+                    </span>
+                    <span>
+                        <i class="date-z">周二</i>
+                        <em class="date-y">12/19</em>
+                    </span>
+                    <span>
+                        <i class="date-z">周三</i>
+                        <em class="date-y">12/19</em>
+                    </span>
+                    <span>
+                        <i class="date-z">周四</i>
+                        <em class="date-y">12/19</em>
+                    </span>
+                    <span>
+                        <i class="date-z">周五</i>
+                        <em class="date-y">12/19</em>
+                    </span>
+                    <span>
+                        <i class="date-z">周六</i>
+                        <em class="date-y">12/19</em>
+                    </span>
+                    <span>
+                        <i class="date-z">周日</i>
+                        <em class="date-y">12/19</em>
+                    </span>
+                </div>
+                <!--课程分布-->
+                <div class="subject_box">
+                    <!--上午课程-->
+                    <div class="sub_top">
+                        <div  id="Day1" class="sub_top_col top_t">
+
+                            <span>AM</span>
+                        </div>
+                        <div  id="Day2" class="sub_top_col top_t">
+
+                            <span></span>
+                        </div>
+                        <div  id="Day3" class="sub_top_col top_t">
+
+                            <span></span>
+                        </div>
+                        <div  id="Day4" class="sub_top_col top_t">
+
+                            <span></span>
+                        </div>
+                        <div  id="Day5" class="sub_top_col top_t">
+
+                            <span></span>
+                        </div>
+                        <div  id="Day6" class="sub_top_col top_t">
+
+                            <span></span>
+                        </div>
+                        <div  id="Day7" class="sub_top_col top_t">
+
+                            <span></span>
+                        </div>
+                    </div>
+                    <!--下午课程-->
+                    <div class="sub_bottom">
+
+                    </div>
+                </div>
+            </div>
+            <!--月课表-->
+            <div class="kb-style kb-ykb" style="display:none">
+                <!-- 头部日期 -->
+                <div class="bigkb-title">
+                    <span>
+                        <i>周一</i>
+                    </span>
+                    <span>
+                        <i>周二</i>
+                    </span>
+                    <span>
+                        <i>周三</i>
+                    </span>
+                    <span>
+                        <i>周四</i>
+                    </span>
+                    <span>
+                        <i>周五</i>
+                    </span>
+                    <span>
+                        <i>周六</i>
+                    </span>
+                    <span>
+                        <i>周日</i>
+                    </span>
+                </div>
+                <!--课程分布-->
+                <div class="subject_box" id="subject_box">
+                    <!--上午课程-->
+                    <div class="sub_top sub_bottom">
+                        <div class="sub_top_col">
+                            <span class="date_d">01</span>
+                            <div class="sub-class col-yyw">
+                                <h1>美国历史</h1>
+                                <p class="vision_jy">共和路校区</p>
+                                <div class="vision_xx">
+                                    <time>09:00-11:00</time>
+                                    <p>无需教室/网课/慈兆佳</p>
+                                    <p>共和路校区/杨佳音-网课</p>
+                                </div>
+                            </div>
+                            <div class="sub-class col-wsk">
+                                <h1>美国历史</h1>
+                                <p class="vision_jy">共和路校区</p>
+                                <div class="vision_xx">
+                                    <time>09:00-11:00</time>
+                                    <p>无需教室/网课/慈兆佳</p>
+                                    <p>共和路校区/杨佳音-网课</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="sub_top_col">
+                            <span class="date_d">02</span>
+                            <div class="sub-class col-yxk">
+                                <h1>美国历史</h1>
+                                <p class="vision_jy">共和路校区</p>
+                                <div class="vision_xx">
+                                    <time>09:00-11:00</time>
+                                    <p>无需教室/网课/慈兆佳</p>
+                                    <p>共和路校区/杨佳音-网课</p>
+                                </div>
+                            </div>
+                            <div class="sub-class col-wsk">
+                                <h1>美国历史</h1>
+                                <p class="vision_jy">共和路校区</p>
+                                <div class="vision_xx">
+                                    <time>09:00-11:00</time>
+                                    <p>无需教室/网课/慈兆佳</p>
+                                    <p>共和路校区/杨佳音-网课</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="sub_top_col">
+                            <span class="date_d">03</span>
+                            <div class="sub-class col-yxk">
+                                <h1>美国历史</h1>
+                                <p class="vision_jy">共和路校区</p>
+                                <div class="vision_xx">
+                                    <time>09:00-11:00</time>
+                                    <p>无需教室/网课/慈兆佳</p>
+                                    <p>共和路校区/杨佳音-网课</p>
+                                </div>
+                            </div>
+                            <div class="sub-class col-wsk">
+                                <h1>美国历史</h1>
+                                <p class="vision_jy">共和路校区</p>
+                                <div class="vision_xx">
+                                    <time>09:00-11:00</time>
+                                    <p>无需教室/网课/慈兆佳</p>
+                                    <p>共和路校区/杨佳音-网课</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="sub_top_col">
+                            <span class="date_d">04</span>
+                            <div class="sub-class col-yxk">
+                                <h1>美国历史</h1>
+                                <p class="vision_jy">共和路校区</p>
+                                <div class="vision_xx">
+                                    <time>09:00-11:00</time>
+                                    <p>无需教室/网课/慈兆佳</p>
+                                    <p>共和路校区/杨佳音-网课</p>
+                                </div>
+                            </div>
+                            <div class="sub-class col-wsk">
+                                <h1>美国历史</h1>
+                                <p class="vision_jy">共和路校区</p>
+                                <div class="vision_xx">
+                                    <time>09:00-11:00</time>
+                                    <p>无需教室/网课/慈兆佳</p>
+                                    <p>共和路校区/杨佳音-网课</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="sub_top_col">
+                            <span class="date_d">05</span>
+                            <div class="sub-class col-yxk">
+                                <h1>美国历史</h1>
+                                <p class="vision_jy">共和路校区</p>
+                                <div class="vision_xx">
+                                    <time>09:00-11:00</time>
+                                    <p>无需教室/网课/慈兆佳</p>
+                                    <p>共和路校区/杨佳音-网课</p>
+                                </div>
+                            </div>
+                            <div class="sub-class col-wsk">
+                                <h1>美国历史</h1>
+                                <p class="vision_jy">共和路校区</p>
+                                <div class="vision_xx">
+                                    <time>09:00-11:00</time>
+                                    <p>无需教室/网课/慈兆佳</p>
+                                    <p>共和路校区/杨佳音-网课</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="sub_top_col">
+                            <span class="date_d">06</span>
+                            <div class="sub-class col-yxk">
+                                <h1>美国历史</h1>
+                                <p class="vision_jy">共和路校区</p>
+                                <div class="vision_xx">
+                                    <time>09:00-11:00</time>
+                                    <p>无需教室/网课/慈兆佳</p>
+                                    <p>共和路校区/杨佳音-网课</p>
+                                </div>
+                            </div>
+                            <div class="sub-class col-wsk">
+                                <h1>美国历史</h1>
+                                <p class="vision_jy">共和路校区</p>
+                                <div class="vision_xx">
+                                    <time>09:00-11:00</time>
+                                    <p>无需教室/网课/慈兆佳</p>
+                                    <p>共和路校区/杨佳音-网课</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="sub_top_col">
+                            <span class="date_d">07</span>
+                            <div class="sub-class col-yxk">
+                                <h1>美国历史</h1>
+                                <p class="vision_jy">共和路校区</p>
+                                <div class="vision_xx">
+                                    <time>09:00-11:00</time>
+                                    <p>无需教室/网课/慈兆佳</p>
+                                    <p>共和路校区/杨佳音-网课</p>
+                                </div>
+                            </div>
+                            <div class="sub-class col-wsk">
+                                <h1>美国历史</h1>
+                                <p class="vision_jy">共和路校区</p>
+                                <div class="vision_xx">
+                                    <time>09:00-11:00</time>
+                                    <p>无需教室/网课/慈兆佳</p>
+                                    <p>共和路校区/杨佳音-网课</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!--下午课程-->
+                    <div class="sub_bottom">
+                        <div class="sub_top_col">
+                            <span class="date_d">08</span>
+                            <div class="sub-class col-yyw">
+                                <h1>美国历史</h1>
+                                <p class="vision_jy">共和路校区</p>
+                                <div class="vision_xx">
+                                    <time>09:00-11:00</time>
+                                    <p>无需教室/网课/慈兆佳</p>
+                                    <p>共和路校区/杨佳音-网课</p>
+                                </div>
+                            </div>
+                            <div class="sub-class col-wsk">
+                                <h1>美国历史</h1>
+                                <p class="vision_jy">共和路校区</p>
+                                <div class="vision_xx">
+                                    <time>09:00-11:00</time>
+                                    <p>无需教室/网课/慈兆佳</p>
+                                    <p>共和路校区/杨佳音-网课</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="sub_top_col">
+                            <span class="date_d">09</span>
+                            <div class="sub-class col-yyw">
+                                <h1>美国历史</h1>
+                                <p class="vision_jy">共和路校区</p>
+                                <div class="vision_xx">
+                                    <time>09:00-11:00</time>
+                                    <p>无需教室/网课/慈兆佳</p>
+                                    <p>共和路校区/杨佳音-网课</p>
+                                </div>
+                            </div>
+                            <div class="sub-class col-wsk">
+                                <h1>美国历史</h1>
+                                <p class="vision_jy">共和路校区</p>
+                                <div class="vision_xx">
+                                    <time>09:00-11:00</time>
+                                    <p>无需教室/网课/慈兆佳</p>
+                                    <p>共和路校区/杨佳音-网课</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="sub_top_col">
+                            <span class="date_d">10</span>
+                            <div class="sub-class col-yyw">
+                                <h1>美国历史</h1>
+                                <p class="vision_jy">共和路校区</p>
+                                <div class="vision_xx">
+                                    <time>09:00-11:00</time>
+                                    <p>无需教室/网课/慈兆佳</p>
+                                    <p>共和路校区/杨佳音-网课</p>
+                                </div>
+                            </div>
+                            <div class="sub-class col-wsk">
+                                <h1>美国历史</h1>
+                                <p class="vision_jy">共和路校区</p>
+                                <div class="vision_xx">
+                                    <time>09:00-11:00</time>
+                                    <p>无需教室/网课/慈兆佳</p>
+                                    <p>共和路校区/杨佳音-网课</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="sub_top_col">
+                            <span class="date_d">11</span>
+                            <div class="sub-class col-yyw">
+                                <h1>美国历史</h1>
+                                <p class="vision_jy">共和路校区</p>
+                                <div class="vision_xx">
+                                    <time>09:00-11:00</time>
+                                    <p>无需教室/网课/慈兆佳</p>
+                                    <p>共和路校区/杨佳音-网课</p>
+                                </div>
+                            </div>
+                            <div class="sub-class col-wsk">
+                                <h1>美国历史</h1>
+                                <p class="vision_jy">共和路校区</p>
+                                <div class="vision_xx">
+                                    <time>09:00-11:00</time>
+                                    <p>无需教室/网课/慈兆佳</p>
+                                    <p>共和路校区/杨佳音-网课</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="sub_top_col">
+                            <span class="date_d">12</span>
+                            <div class="sub-class col-yyw">
+                                <h1>美国历史</h1>
+                                <p class="vision_jy">共和路校区</p>
+                                <div class="vision_xx">
+                                    <time>09:00-11:00</time>
+                                    <p>无需教室/网课/慈兆佳</p>
+                                    <p>共和路校区/杨佳音-网课</p>
+                                </div>
+                            </div>
+                            <div class="sub-class col-wsk">
+                                <h1>美国历史</h1>
+                                <p class="vision_jy">共和路校区</p>
+                                <div class="vision_xx">
+                                    <time>09:00-11:00</time>
+                                    <p>无需教室/网课/慈兆佳</p>
+                                    <p>共和路校区/杨佳音-网课</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="sub_top_col">
+                            <span class="date_d">13</span>
+                            <div class="sub-class col-yyw">
+                                <h1>美国历史</h1>
+                                <p class="vision_jy">共和路校区</p>
+                                <div class="vision_xx">
+                                    <time>09:00-11:00</time>
+                                    <p>无需教室/网课/慈兆佳</p>
+                                    <p>共和路校区/杨佳音-网课</p>
+                                </div>
+                            </div>
+                            <div class="sub-class col-wsk">
+                                <h1>美国历史</h1>
+                                <p class="vision_jy">共和路校区</p>
+                                <div class="vision_xx">
+                                    <time>09:00-11:00</time>
+                                    <p>无需教室/网课/慈兆佳</p>
+                                    <p>共和路校区/杨佳音-网课</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="sub_top_col">
+                            <span class="date_d">14</span>
+                            <div class="sub-class col-yyw">
+                                <h1>美国历史</h1>
+                                <p class="vision_jy">共和路校区</p>
+                                <div class="vision_xx">
+                                    <time>09:00-11:00</time>
+                                    <p>无需教室/网课/慈兆佳</p>
+                                    <p>共和路校区/杨佳音-网课</p>
+                                </div>
+                            </div>
+                            <div class="sub-class col-wsk">
+                                <h1>美国历史</h1>
+                                <p class="vision_jy">共和路校区</p>
+                                <div class="vision_xx">
+                                    <time>09:00-11:00</time>
+                                    <p>无需教室/网课/慈兆佳</p>
+                                    <p>共和路校区/杨佳音-网课</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- E--课表 -->
+    </div>
+    <!--E--右边部分-->
+</div>
+</body>
+<script>
+    var G_course; //定义一个全局变量，用于初始化
+    var dataStr;//用于存储当前日期
+    var G_day_1;
+    var G_day_2;
+    var G_day_3;
+    var G_day_4;
+    var G_day_5;
+    var G_day_6;
+    var G_day_7;
+    var allData,teaData=[];
+    var setDate,addDates,addDate,cells;
+    var weekSea=[];
+    $(document).ready(function(){
+        $.ajax({
+
+            url:"/sdpk/aaCla?qqiu=list",
+            type: "POST",
+            //data: JSON.stringify(param),
+            // data: JSON.stringify(send_R4),
+            contentType: "application/json;charset=UTF-8",
+            success:function(result){
+                //步骤1_a1，在步骤1的ajax的回调函数
+                huiFuncR4(result);
+                // alert("下拉框加载完成");
+            }
+
+        });
+        function huiFuncR4(result){
+            // alert("回调中");
+            var objR4 = {};
+            objR4 = JSON.parse(result);
+            var a2dataR4 = objR4.data;
+            a2dataR4.unshift({'uuid':'allGet','name':'所有班级'});
+            console.log(a2dataR4);
+            $('#grade').combobox({
+                // url: 'AjaxHandler/RadioCommon.ashx?action=bindAgeType',//对应的ashx页面的数据源
+                data: a2dataR4,
+                valueField: 'uuid',//绑定字段ID
+                textField: 'name',//绑定字段Name
+                panelHeight: 'auto',//自适应
+                value: "请选择班级",
+                editable: false
+            });
+
+        }// end 1_x1 外圈
+        $('#grade').combobox({
+            onChange: function () {
+                teaData.length=0;
+                empUuid = $('#grade').combobox('getValue');
+                console.log(allData,empUuid);
+                for(var i=0;i<allData.length;i++){
+                    if(empUuid==allData[i].claUuid){
+                        teaData.push(allData[i]);
+                    }
+                }
+                if(empUuid=="allGet"){
+                    for(var i=0;i<allData.length;i++){
+                        teaData.push(allData[i]);
+                    }
+                }
+                $("#Day1").empty();
+                $("#Day2").empty();
+                $("#Day3").empty();
+                $("#Day4").empty();
+                $("#Day5").empty();
+                $("#Day6").empty();
+                $("#Day7").empty();
+                weekSea.length=0;
+                teaFun();
+            }
+        })
+        var send_cData = {};
+        $.ajax({
+            url:"/sdpk/aaQueKeAll?qqiu=list",
+            type:"POST",
+            contentType :"application/json;charset=UTF-8",
+            data: JSON.stringify(send_cData),
+            success:function (result) {
+                allData = JSON.parse(result).data;
+                // teaFun();
+            }
+        });
+//    月课表的相关操作
+        function teaFun(){
+             cells = $('.bigkb-title .date-y');
+            var cell = cells.length;
+            console.log(cell);
+            var formatDate = function (date) {
+                var year = date.getFullYear();
+
+                var month = date.getMonth()+1;
+
+
+                var day = date.getDate();
+                day<10?day='0'+day:'';
+                month<10?month='0'+month:'';
+//                var week = ['周日','周一','周二','周三','周四','周五','周六'][date.getDay()];
+                return year+'/'+month+"/"+day
+            };//上面这段代码是获取今天的年月日及星期
+             addDate = function(date,n){
+                date.setDate(date.getDate()+n);
+                return date;
+            };//设置当前月的某一天（这里是指今天）
+             setDate = function(date){
+                var week = date.getDay()-1;
+                date = addDate(date,week*-1);
+                currentFirstDate = new Date(date);
+                var titleDayList = [];
+                for(var i=0; i<cell;i++){
+                    cells[i].innerHTML = formatDate(i==0 ? date:addDate(date,1));
+                    titleDayList[i] = cells[i];
+                    dataStr += cells[i].innerHTML.replace(/[/]/g,'-');
+                }
+                G_day_1 = $(titleDayList[0]).text();
+                G_day_1 = G_day_1.replace(/\//g,"-"); //把/替换成-，把斜杠替换成减号
+                G_day_2 = $(titleDayList[1]).text();
+                G_day_2 = G_day_2.replace(/\//g,"-"); //把/替换成-，把斜杠替换成减号
+                G_day_3 = $(titleDayList[2]).text();
+                G_day_3 = G_day_3.replace(/\//g,"-"); //把/替换成-，把斜杠替换成减号
+                G_day_4 = $(titleDayList[3]).text();
+                G_day_4 = G_day_4.replace(/\//g,"-"); //把/替换成-，把斜杠替换成减号
+                G_day_5 = $(titleDayList[4]).text();
+                G_day_5 = G_day_5.replace(/\//g,"-"); //把/替换成-，把斜杠替换成减号
+                G_day_6 = $(titleDayList[5]).text();
+                G_day_6 = G_day_6.replace(/\//g,"-"); //把/替换成-，把斜杠替换成减号
+                G_day_7 = $(titleDayList[6]).text();
+                G_day_7 = G_day_7.replace(/\//g,"-"); //把/替换成-，把斜杠替换成减号
+//                console.log(dataStr);
+//                console.log(typeof dataStr);
+                var weekDate = [G_day_1,G_day_2,G_day_3,G_day_4,G_day_5,G_day_6,G_day_7];
+                function getData (Day,allData){
+                    var oneData = [],chgData;
+                    for(var i=0;i<teaData.length;i++){
+                        if(teaData[i].keDateTime==Day){
+                            oneData.push(teaData[i]);
+                        }
+                    }
+                    for(var i=0;i<oneData.length;i++){
+                        for(var j=i+1;j<oneData.length;j++){
+                            if(Number(oneData[i].keStartTime.split(':').join(''))>Number(oneData[j].keStartTime.split(':').join(''))){
+                                chgData = oneData[i];
+                                oneData[i] = oneData[j];
+                                oneData[j] = chgData;
+                            }
+                        }
+                    }
+                    return oneData;
+                }
+                for(var i=0;i<weekDate.length;i++){
+                    weekSea.push(getData(weekDate[i],teaData));
+                }
+                console.log(weekSea);
+                weekCourse(weekSea[0]);
+                weekCourse2(weekSea[1]);
+                weekCourse3(weekSea[2]);
+                weekCourse4(weekSea[3]);
+                weekCourse5(weekSea[4]);
+                weekCourse6(weekSea[5]);
+                weekCourse7(weekSea[6]);
+                //        ajax数据交互
+                //        第一天
+                /* 遍历后台数据 */
+                function weekCourse(result) {
+                    for(var i=0;i<result.length;i++){
+                        var one = result[i];
+                        $html1= $("<div class='sub-class col-yyw'>"+"<h1>"+one.courseName+"</h1>"+"<h1>"+one.keDateTime+"</h1>"+"<div class='vision_xx'>"+"<time>"+one.keStartTime+"-"+one.keEndTime+"</time>"+"<p>"+one.croomName+"/"+one.empName+"</p>"+"</div>"+"</div>")
+                        $("#Day1").append($html1);
+                    }
+                }
+                /*第二天*/
+                /* 遍历后台数据 */
+                function weekCourse2(result) {
+                    for(var i=0;i<result.length;i++){
+                        var two = result[i];
+                        $html2 = $("<div class='sub-class col-yyw'>"+"<h1>"+two.courseName+"</h1>"+"<h1>"+two.keDateTime+"</h1>"+"<div class='vision_xx'>"+"<time>"+two.keStartTime+"-"+two.keEndTime+"</time>"+"<p>"+two.croomName+"/"+two.empName+"</p>"+"</div>"+"</div>");
+                        $("#Day2").append($html2 );
+                    }
+                }
+                /*第三天*/
+                /* 遍历后台数据 */
+                function weekCourse3(result) {
+                    for(var i=0;i<result.length;i++){
+                        var thr = result[i];
+                        $html3 = $("<div class='sub-class col-yyw'>"+"<h1>"+thr.courseName+"</h1>"+"<h1>"+thr.keDateTime+"</h1>"+"<div class='vision_xx'>"+"<time>"+thr.keStartTime+"-"+thr.keEndTime+"</time>"+"<p>"+thr.croomName+"/"+thr.empName+"</p>"+"</div>"+"</div>" );
+                        $("#Day3").append($html3);
+                    }
+                }
+
+                /*第4天*/
+                /* 遍历后台数据 */
+                function weekCourse4(result) {
+                    for(var i=0;i<result.length;i++){
+                        var four = result[i];
+                        $html4 = $("<div class='sub-class col-yyw'>"+"<h1>"+four.courseName+"</h1>"+"<h1>"+four.keDateTime+"</h1>"+"<div class='vision_xx'>"+"<time>"+four.keStartTime+"-"+four.keEndTime+"</time>"+"<p>"+four.croomName+"/"+four.empName+"</p>"+"</div>"+"</div>");
+                        $("#Day4").append($html4 );
+                    }
+                }
+
+                /*第5天*/
+                /* 遍历后台数据 */
+                function weekCourse5(result) {
+                    for(var i=0;i<result.length;i++){
+                        var five = result[i];
+                        $html5 = $("<div class='sub-class col-yyw'>"+"<h1>"+five.courseName+"</h1>"+"<h1>"+five.keDateTime+"</h1>"+"<div class='vision_xx'>"+"<time>"+five.keStartTime+"-"+five.keEndTime+"</time>"+"<p>"+five.croomName+"/"+five.empName+"</p>"+"</div>"+"</div>");
+                        $("#Day5").append( $html5);
+                    }
+                }
+                /*第6天*/
+                /* 遍历后台数据 */
+                function weekCourse6(result) {
+                    for(var i=0;i<result.length;i++){
+                        var six = result[i];
+                        $html6 = $("<div class='sub-class col-yyw'>"+"<h1>"+six.courseName+"</h1>"+"<h1>"+six.keDateTime+"</h1>"+"<div class='vision_xx'>"+"<time>"+six.keStartTime+"-"+six.keEndTime+"</time>"+"<p>"+six.croomName+"/"+six.empName+"</p>"+"</div>"+"</div>");
+                        $("#Day6").append( $html6);
+                    }
+                }
+
+                /*第7天*/
+                /* 遍历后台数据 */
+                function weekCourse7(result) {
+                    for(var i=0;i<result.length;i++){
+                        var seve = result[i];
+                        $html7 = $("<div class='sub-class col-yyw'>"+"<h1>"+seve.courseName+"</h1>"+"<h1>"+seve.keDateTime+"</h1>"+"<div class='vision_xx'>"+"<time>"+seve.keStartTime+"-"+seve.keEndTime+"</time>"+"<p>"+seve.croomName+"/"+seve.empName+"</p>"+"</div>"+"</div>");
+                        $("#Day7").append($html7);
+                    }
+                }
+            };//end date
+            //对周课表进行操作  有个小问题，当现实到当前时间时 标记框不消失
+            if($('.kb-zkb').is(":visible")){
+                var mydate = new Date();
+                var curYear = mydate.getFullYear();
+                var curMonth = mydate.getMonth()+1;
+
+                $('#mark-txt').click(function(){
+                    var mydate = new Date();
+                    var curYear = mydate.getFullYear();
+                    var curMonth = mydate.getMonth()+1;
+                    setDate(new Date());
+                    $('#date-time').text(curYear+"年"+curMonth+'月');
+                    $(this).hide();
+                });
+            }
+            setDate(new Date());
+        };
+        $('#prev').click(function(){
+            $("#Day1").empty();
+            $("#Day2").empty();
+            $("#Day3").empty();
+            $("#Day4").empty();
+            $("#Day5").empty();
+            $("#Day6").empty();
+            $("#Day7").empty();
+            weekSea.length=0;
+            setDate(addDate(currentFirstDate,-7));
+            var curDay = cells[0].innerHTML;//获取当前日期字符串
+            var curFl =curDay.split("/");
+
+            $('#date-time').text(curFl[0]+"年"+curFl[1]+'月');
+            $('#mark-txt').show().text("本周");
+        });
+        $('#next').click(function(){
+            $("#Day1").empty();
+            $("#Day2").empty();
+            $("#Day3").empty();
+            $("#Day4").empty();
+            $("#Day5").empty();
+            $("#Day6").empty();
+            $("#Day7").empty();
+            weekSea.length=0;
+            setDate(addDate(currentFirstDate,+7));
+            var curDay = cells[0].innerHTML;//获取当前日期字符串
+            var curFl =curDay.split("/");
+
+            $('#date-time').text(curFl[0]+"年"+curFl[1]+'月');
+            $('#mark-txt').show().text("本周");
+        });
+        /* 点击本周按钮,左上角日期回到当前，下面的日期也回到当前 */
+        /* 周课表月课表的切换 */
+        $(function(){
+            var $li = $(".data-right li");
+            var $div = $('.kb-bigbox>div');
+            $li.click(function(){
+                var $t = $(this).index();
+                $li.removeClass("licur");
+                $(this).addClass("licur");
+                $div.css("display","block");
+                $div.eq($t).css("display","none");
+            });
+        });
+        /* 简约版详细版切换 */
+        $('.ztb li').click(function(){
+            $('.ztb li').removeClass("curli");
+            $(this).addClass("curli");
+            var liIndex = $(this).index();
+            if(liIndex == 0){
+                $(".vision_jy").hide();
+                $(".vision_xx").show();
+            }else {
+                $(".vision_jy").show();
+                $(".vision_xx").hide();
+            }
+        });
+        /*浮动元素高度继承父集高度 有一些问题*/
+        $(function(){
+            var ht = $(".sub_top").innerHeight();
+            console.log(ht);
+            // $('.top_t').css("height",ht);
+            var hb = $(".sub_bottom").innerHeight();
+            $('.bottom_t').css("height",ht);
+        });
+        /* 选择老师弹窗 */
+        $('.sel-teacher .info-input').click(function(){
+            if($('.sel-teacher .drop-down').is(":visible")){
+                $('.sel-teacher .drop-down').hide();
+            }else {
+                $('.sel-teacher .drop-down').show();
+            }
+        });
+        /* 左边下拉选择 */
+        $(function(){
+            $('.menu-list span').click(function(){
+                if($(this).siblings('.check-xq').is(":visible") == true){
+                    $(this).siblings('.check-xq').hide();
+                }else{
+                    $(this).siblings('.check-xq').show();
+                }
+            });
+        });
+        /* 左边checkbox判断 */
+        $(function(){
+            /*全选取消发生事件-校区班级*/
+            $(".check-xz input ,.check-bj input ,.check-js input").click(function(){
+                if($(this).is(":checked")){
+                    $(this).parents(".check-xq").find("span").addClass("check-all");
+                }else {
+                    $(this).parents(".check-xq").find("span").removeClass("check-all");
+                }
+            });
+            /* 单个选中事件 */
+            $('.others input').click(function(){
+                if($(this).is(":checked")){
+                    $(this).parent().addClass("check-all");
+
+                }else {
+                    $(this).parent().removeClass("check-all");
+                }
+            });
+
+        });
+        /* 左边教师选择 */
+        $(function(){
+            $('.sel-teacher .drop-down li').click(function(){
+                var liValue = $(this).text();
+                $('.sel-teacher .drop-down').hide();
+                $('.sel-teacher .info-input').val(liValue);
+            });
+        });
+        /* 右边部分相关日历日期赋值 */
+
+    });
+
+</script>
+</html>

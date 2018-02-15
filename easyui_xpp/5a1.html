@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>添加课程</title>
+
+    <!-- <script type="text/javascript" src="../xppjs/jquery.js"></script> -->
+    <script type="text/javascript" src="jquery-easyui-136/jquery.min.js"></script>
+
+    <script type="text/javascript" src="jquery-easyui-136/jquery.easyui.min.js"></script>
+    <script type="text/javascript" src="jquery-easyui-136/locale/easyui-lang-zh_CN.js"></script>
+    <script type="text/javascript" src="../xppjs/jquery.serialize-object.js"></script>
+    <script type="text/javascript" src="DataTables/datatables.js"></script>
+    <script type="text/javascript" src="../xppjs/jquery.cookie.js"></script>
+
+    <link rel="stylesheet" type="text/css" href="jquery-easyui-136/themes/gray/easyui.css"/>
+    <link rel="stylesheet" type="text/css" href="jquery-easyui-136/themes/icon.css"/>
+    <link rel="stylesheet" type="text/css" href="DataTables/datatables.css"/>
+    <link rel="stylesheet" type="text/css" href="../HMcode/HMcss/5a1.css">
+
+
+    <script>
+
+        //验证所有类名yzss输入框
+        function yzV1() {
+            var m = {};
+            // m=document.getElementsByTagName("input");
+            m = document.getElementsByClassName("yzss");
+
+            for (var i = 0; i < m.length; i++) {
+                if (m[i].value == "" || m[i].value == null) {
+                    alert("请填写所有输入框的值" + m[i].id);
+                    return false;
+                }
+            }//end for
+            console.log("合同前两行输入框验证，有值！！");
+            return true;
+        }
+
+
+        function submitForm() {
+            var f1 = yzV1();
+            var flag = false;
+            if (f1 == true) {
+                flag = true;
+            }
+            if (flag) {
+                //$('#ff').form('submit');
+                var param = $("#ff").serializeObject();
+                $.ajax({
+
+                    url: "/sdpk/aaCourse?qqiu=add",
+                    type: "POST",
+                    //data: JSON.stringify(param),
+                    data: JSON.stringify(param),
+                    contentType: "application/json;charset=UTF-8",
+                    success: function (result) {
+                        var obj = JSON.parse(result);
+                        alert(obj.message);
+                        // alert("得到返回uuid");
+                        var objT = {};
+                        objT = JSON.parse(result);
+                        var a2dataT = objT.data;
+                        //获取并显示
+                        var test = a2dataT[0];
+//                        alert("新增课程uuid为："+test);
+                        var ckSend = a2dataT[0];
+                        //传班级uuid到cookie中
+                        $.cookie('UidCourse', ckSend);
+                        obj.message == '新增成功'?window.location.href="5a1_gx2.html":window.location.href="5a1.html";
+                        //调用父级弹窗start
+                        // var $parent = self.parent.$;
+                        // $parent('#menu_e2').click();
+                        //调用父级弹窗end
+                    }
+
+                });
+            }//end if(flag)
+        }//end function submitForm
+
+        function clearForm() {
+            $('#ff').form('clear');
+        };//end function clearForm
+
+
+    </script>
+
+    <script>
+        $(document).ready(function () {
+            $("button").click(function () {
+                $.ajax({
+                    url: "/sdpk/bb", success: function (result) {
+                        $("#div1").html(result);
+                    }
+                });
+            });
+
+
+            $('#paike_biao').DataTable();
+
+        });
+    </script>
+
+
+    <style type="text/css">
+        * {
+            font-family: "黑体";
+        }
+    </style>
+</head>
+<body>
+
+<div id="fen_container" class="tab-con">
+
+    <div id="ye_1_blank"></div>
+    <div id="ye_2_blank"></div>
+
+    <div id="ye_3_text_container">
+        <div id="header_1">
+            <h2>新增课程</h2>
+        </div>
+
+        <div id="header_2">
+        </div>
+
+        <div id="header_3_form">
+            <form id="ff" method="post">
+                <table id="header_3_tb1" class="tab-style">
+
+                    <!-- 第一行 -->
+                    <tr>
+                        <td align="center" class="name-s" style="padding-left:0">课程名称</td>
+                        <td><input type="text" name="name" class="yzss" placeholder="请输入课程名称"></td>
+                        <td class="name-s">校区组织</td>
+                        <td>
+                            <select name="org" class="yzss sel_s">
+                                <option value="所有校区">所有校区</option>
+                                <option value="企业公馆校区">企业公馆校区</option>
+                            </select>
+                        </td>
+                    </tr>
+                    <!-- 第一行结束 -->
+
+                </table><!-- end id=header_3_tb1 -->
+
+            <!--    <table id="header_3_tb2" class="tab-style">
+                    &lt;!&ndash; 第一行 &ndash;&gt;
+                    <tr>
+                        <td class="name-s" style="padding-left:0">单价类别</td>
+                        <td>
+                            <select name="category" class="yzss sel_s">
+                                <option value="无">无</option>
+                                <option value="1200A">1200A</option>
+                                <option value="1500B">1500B</option>
+                            </select>
+                        </td>
+
+                    </tr>
+                    &lt;!&ndash; 第一行结束 &ndash;&gt;
+                </table> &lt;!&ndash; end id为 header_3_tb2 &ndash;&gt;
+-->
+                <table id="header_3_tb4" class="tab-style">
+                    <!-- 第一行 -->
+                    <tr>
+                        <td class="name-s" style="padding-left:0">
+                            课程描述
+                        </td>
+                        <td><input type="text" name="describe" class="yzss tc_td" value="无" ></td>
+                    </tr>
+                    <!-- 第一行结束 -->
+                </table> <!-- end id为 header_3_tb4 -->
+
+            </form>
+            <!-- 按钮div开始 -->
+            <div class="btn-box" style="margin-right: 7px;">
+                <a href="javascript:void(0)" class="easyui-linkbutton btn-xk" onclick="clearForm()">清空</a>
+                <a href="javascript:void(0)" class="easyui-linkbutton btn-qr" onclick="submitForm()">下一步</a>
+            </div>
+            <!-- 按钮div结束 -->
+        </div><!-- end div  header_3_form-->
+
+    </div><!-- end div  ye_3_text_container-->
+</div><!-- end div  id="fen_container"-->
+<!-- S--公用弹窗 -->
+<div class="alert-main">
+    <p class="alert-con">此条学生信息已删除</p>
+    <a class="close-item">×</a>
+</div>
+<script>
+    $(function () {
+        $('.close-item').click(function(){
+            $('.alert-main').hide()
+        })
+    })
+</script>
+<!-- E--公用弹窗 -->
+</body>
+</html>

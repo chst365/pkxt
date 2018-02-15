@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>关系创建</title>
+	
+	<!-- <script type="text/javascript" src="../xppjs/jquery.js"></script> -->
+	<script type="text/javascript" src="jquery-easyui-136/jquery.min.js"></script>
+	<script type="text/javascript" src="jquery-easyui-136/jquery.easyui.min.js"></script>
+	<script type="text/javascript" src="jquery-easyui-136/locale/easyui-lang-zh_CN.js"></script>
+    <script type="text/javascript" src="DataTables/datatables.js"></script>
+	<script type="text/javascript" src="../xppjs/jquery.serialize-object.js"></script>
+    <script type="text/javascript" src="../xppjs/jquery.cookie.js"></script>
+	
+	<link   rel="stylesheet" type="text/css" href="jquery-easyui-136/themes/gray/easyui.css"/>
+	<link   rel="stylesheet" type="text/css" href="jquery-easyui-136/themes/icon.css"/>
+    <link   rel="stylesheet" type="text/css" href="DataTables/datatables.css"/>
+    <link   rel="stylesheet" type="text/css" href="../HMcode/HMcss/3a1_gx2.css"/>
+
+
+	<script type="text/javascript">
+        var table_pk3;//全局变量
+        var G_Uidcla;//全局变量
+		 $(document).ready(function(){
+
+             /*第零步：把datatables插件的警告窗变成控制台打印*/
+
+             $.fn.dataTable.ext.errMode = 'none';
+
+            //------------以下部分是获取cookie中的班级uuid-start-----------
+        // 取出
+            G_Uidcla = $.cookie('UidCla');
+
+        //------------步骤0--------------------
+
+        //1个表格初始化
+             table_pk3 = $('#G3_tb5').DataTable( {
+                "ajax": "/sdpk/aaClass_Contract?qqiu=getListBycla&classUuid="+G_Uidcla,
+                "searching" : false, //去掉搜索框方法一
+                "bFilter": false,   //去掉搜索框方法二
+                "bSort": false,  //禁止排序
+                "paging": false,   //禁止分页
+                "info": false,   //去掉底部文字
+
+                "columns": [
+                    { "data": "className" ,"width":"350px"},
+                    { "data": "contrName" ,"width":"350px"}
+                ]
+            } );//end 1个表格初始化 结束
+
+
+
+        //------------步骤一--------------------
+		 	//步骤1，加载所有下拉框
+        //获取班级列表数据，并取出其中的数组类型
+        var send_edit_data = {};
+            // send_edit_data.uuid = delRowData.uuid;
+            send_edit_data.id = "001";
+            send_edit_data.claUuid = "名字";
+            //获取关系一班级下拉框数据	
+            $.ajax({
+                
+                url:"/sdpk/aaCla?qqiu=list",
+                type: "POST",
+                //data: JSON.stringify(param),
+                data: JSON.stringify(send_edit_data),
+                contentType: "application/json;charset=UTF-8", 
+                success:function(result){
+                //步骤1_a1，完成下拉框L3
+                huiFunc1(result);
+                }
+             
+            });
+
+          //获取合同下拉框数据L4和R3
+          var send_R3 = {};
+            send_R3.id = "stu01";
+            $.ajax({
+                
+                url:"/sdpk/aaMyContrtext?qqiu=nameTcnameList",
+                type: "POST",
+                //data: JSON.stringify(param),
+                data: JSON.stringify(send_R3),
+                contentType: "application/json;charset=UTF-8", 
+                success:function(result){
+                //步骤1_a1，在步骤1的ajax的回调函数
+                huiFuncR3(result);
+                // alert("下拉框加载完成");
+                }
+             
+            });
+
+
+//end 1 外圈 加载所有下拉框
+
+    	//步骤1_x1，在步骤1的回调,展示L1,L2,L3下拉框
+    function huiFunc1(result){
+    // alert("回调中");
+    var a2obj = {};
+    a2obj = JSON.parse(result);
+    var a2data = a2obj.data;
+    $('#L3cc').combobox({
+               data: a2data,
+                valueField: 'uuid',
+                textField: 'name',
+                selectOnNavigation: false,
+                value:G_Uidcla,  //默认选中value指定的选项
+                readonly:true,  //不可选择
+
+                //选择事件，选重的时候同时加载数据表
+                onSelect: function(rec){
+                    var cUuid = rec.uuid;
+                    var newUrl = '/sdpk/aaClass_Contract?qqiu=getListBycla&classUuid='+cUuid;
+                    console.log(newUrl);
+                    table_pk3.ajax.url(String(newUrl)).load();
+                    // alert("ajax重载了");
+
+                }//end  方法onSelect
+            });
+
+    }// end 1_x1 外圈 
+
+
+    //步骤1_xR3，在步骤1的ajax的回调函数,展示列表数据
+    function huiFuncR3(result){
+    // alert("回调中");
+    var objR3 = {};
+    objR3 = JSON.parse(result);
+    var a2dataR3 = objR3.data;
+    console.log(a2dataR3);
+    $('#R3dd').combobox({
+               data: a2dataR3,
+                valueField: 'uuid',
+                textField: 'nameTcname',
+                selectOnNavigation: false
+            });
+
+    }// end 1_x1 外圈 
+
+
+    //------------步骤二--------------------
+    //保存一按钮；新增班级和班主任关联
+    $( "#save_3" ).click(function() { 
+
+        var sendSave_3 = {};
+        sendSave_3.classUuid = $('#L3cc').combobox('getValue');
+        sendSave_3.contrUuid = $('#R3dd').combobox('getValue');
+
+        $.ajax({
+                
+                url:"/sdpk/aaClass_Contract?qqiu=add",
+                type: "POST",
+                //data: JSON.stringify(param),
+                data: JSON.stringify(sendSave_3),
+                contentType: "application/json;charset=UTF-8", 
+                success:function(result){
+                var obj = {};
+                obj = JSON.parse(result);
+                alert(obj.message);
+                table_pk3.ajax.reload();
+   
+                // huiFunc_submit(result);
+                }
+             
+            });
+
+
+    });//end 步骤二 外圈 submitForm
+
+    //------------步骤三--------------------
+    //关系三列表选择
+    var selectTable3 = $('#G3_tb5 tbody').on( 'click', 'tr', function () {
+        if ( $(this).hasClass('selected') ) {
+            $(this).removeClass('selected');
+        }
+        else {
+            table_pk3.$('tr.selected').removeClass('selected');
+            $(this).addClass('selected');
+        }//end if 
+
+    } );//end 2 外圈 $('#G1_tb2 tbody').on
+
+    //------------步骤四--------------------
+    //关系三删除按钮单击事件
+    $('#del_3').click( function () {
+
+        //要初始化一个对象，不然会报undifine未定义错误
+        var delRowData = {};
+        //获取选择那一行的数据
+         delRowData = table_pk3.row('.selected').data();
+         //获取选择行中的uuid字段
+         var Auuid = delRowData.uuid;
+         
+         //post请求体传给后台的js对象
+         var send_data = {};
+         send_data.uuid = Auuid;
+         // alert( "选择的行的uuid: "+send_data);
+         //调用ajax方法传给后台接口
+         $.ajax({
+                
+                url:"/sdpk/aaClass_Contract?qqiu=delete",
+                type: "POST",
+                //data: JSON.stringify(param),
+                data: JSON.stringify(send_data),
+                contentType: "application/json;charset=UTF-8", 
+                success:function(result){
+                    var obj = JSON.parse(result);
+                    alert(obj.message);
+                    table_pk3.ajax.reload();
+
+                }
+             
+            });//end $.ajax
+
+         table_pk3.row('.selected').remove().draw( false );//图形删除，没有传到后台接口
+
+    } );//end 4 外圈 $('#delbut').click
+
+
+
+    
+
+
+
+});//end 最外层 $(document).ready
+	</script>
+
+
+    <script type="text/javascript">
+
+    function clearForm(){
+            alert("在修改中可再次编辑关系");
+            window.location.href="3a2_ye1.html";
+            //调用父级弹窗start
+//                var $parent = self.parent.$;
+//                $parent('#menu_c2').click();
+            //调用父级弹窗end
+        };//end function clearForm
+
+        function submitForm(){
+            var $parent = self.parent.$;
+            $parent('#menu_c2').click();
+        };//end function clearForm
+
+    </script>
+
+</head>
+<body>
+	
+	<div id="fen_container" class="tab-con">
+
+		<div id="ye_1_blank"></div>
+		<div id="ye_2_blank"></div>
+
+		<div id="ye_3_text_container">
+			<div id="header_1">
+                <h2>添加</h2>
+            </div>
+            <!-- 留空按钮 -->
+            <!--<div style="width: 923px;height: 22px;float:left;"></div>-->
+            <!-- 留空按钮结束 -->
+            <!-- 划文字 -->
+            <div class="tit_style">
+                <h3>添加合同</h3>
+            </div><!-- 划文字结束 -->
+
+            <div id="header_3_form">
+                    <!-- start  3行布局 -->
+                    <table id="header_3_tb1" class="tab-style">
+                    <!-- 第二行 -->
+                    <tr>
+                    <td class="name-s" style="padding-left:0">班级:</td>
+                    <td>
+                    <input id="L3cc"  name="" class="easyui-combobox" style="height: 36px;width: 200px;font-size:16px;">
+                    </td>
+                    <td class="name-s">合同:</td>
+                    <td>
+                    <input id="R3dd" type="" name="" class="easyui-combobox" style="height: 36px;width: 200px;font-size:16px;">
+                    </td>
+                    <td style="padding-left:100px;">
+                    <button id="save_3" class="btn-class">保存</button>
+                    <button id="del_3" class="btn-class del-btn">删除</button>
+                    </td>
+                    </tr>
+                    <!-- 第二行结束 -->
+
+                    </table><!-- end id=header_3_tb1 -->
+                    <!-- end  3行布局 -->
+
+
+            		<!-- 包裹关系三列表，关系四列表 start-->
+            		<div id="HasG3G4">
+            		<table id="G3_tb5"  class="tab-mians">
+            		<!--start 表头 -->
+                        <thead class="tab-tit">
+                            <tr>
+                                <th style="min-width:150px;">班级</th>
+                                <th style="min-width:150px;">合同</th>
+                            </tr>
+                        </thead>
+                        <!--end 表头 -->
+                        <!-- start 表尾 -->
+                        <tfoot class="tab-tit">
+                            <tr>
+                                <th style="min-width:150px;">班级</th>
+                                <th style="min-width:150px;">合同</th>
+                            </tr>
+                        </tfoot>
+                        <!-- end 表尾 -->
+            		</table> <!-- end id为 G3_tb5 -->
+
+            		</div> <!-- 包裹关系三列表，关系四列表 结束-->
+
+                    <!-- 按钮div开始 -->
+                        <div class="btn-box">
+                            <a href="javascript:void(0)" class="easyui-linkbutton btn-xk"  onclick="clearForm()">取消</a>
+                            <a href="javascript:void(0)" class="easyui-linkbutton btn-qr" onclick="submitForm()">完成</a>
+                        </div>
+                        <!-- 按钮div结束 -->
+
+            </div><!-- end div  header_3_form-->
+
+		</div><!-- end div  ye_3_text_container-->
+
+
+	</div><!-- end div  id="fen_container"-->
+</body>
+<script>
+    $(function(){
+        /* 表格自适应设置 */
+        $('table.dataTable').css("width","100%");
+    })
+</script>
+</html>

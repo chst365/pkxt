@@ -1,0 +1,96 @@
+
+<!DOCTYPE html>
+<html lang="en" class="no-js">
+
+    <head>
+
+        <meta charset="utf-8">
+        <title>树袋老师</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="description" content="">
+        <meta name="author" content="">
+
+        <!-- 老的 -->
+        <script src="assets/js/jquery-1.8.2.min.js"></script>
+        <script src="assets/js/supersized.3.2.7.min.js"></script>
+        <script src="assets/js/supersized-init.js"></script>
+        <script src="assets/js/scripts.js"></script>
+
+        <!-- 新的 -->
+        <script type="text/javascript" src="xppjs/jquery.serialize-object.js"></script>
+
+        <!-- CSS 
+        <link rel='stylesheet' href='http://fonts.googleapis.com/css?family=PT+Sans:400,700'>
+        -->
+        
+        <link rel="stylesheet" href="assets/css/reset.css">
+        <link rel="stylesheet" href="assets/css/supersized.css">
+        <link rel="stylesheet" href="assets/css/style.css">
+
+        <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
+        <!--[if lt IE 9]>
+            <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+        <![endif]-->
+
+        <script type="text/javascript">
+
+            $(document).ready(function() {
+
+                $( "#btn_denlu" ).click(function() {
+//                    alert("开始点击");
+                    var send_edit_data = {};
+                    send_edit_data.uLogUser = document.getElementById("uLogUser").value;
+//             alert(send_edit_data.uLogUser);
+                    send_edit_data.uPassWord = document.getElementById("uPassWord").value;
+//                    alert("密码:"+send_edit_data.uPassWord);
+                    $.ajax({
+                        url:"/sdpk/aaDengLu?qqiu=denglu",
+                        type: "POST",
+                        data: JSON.stringify(send_edit_data),
+                        contentType: "application/json;charset=UTF-8",
+                        success:function(result){
+                            //步骤1_a1，在步骤1的ajax的回调函
+//                            alert("登录执行中");
+                            var result2obj = {};
+                            result2obj = JSON.parse(result);
+                            if(result2obj.qingqiu=="yes"){
+//                                alert("用户密码正确");
+                                window.location.href="xppu8.html";
+                            }
+                            else{
+                                alert(result2obj.message);
+                            }
+                        }//end 方法 success
+
+                    });
+                });//end 7 外圈 close
+
+
+            } );//end 最外层 $(document).ready
+
+
+        </script>
+
+    </head>
+
+    <body>
+
+        <div class="page-container">
+            <h1>树袋老师</h1>
+                <div style="width:300px;margin: 0 auto;">
+                <input type="text" id="uLogUser" name="uLogUser" class="username" style="float: left" width="300px" placeholder="用户名">
+                <input type="password" id="uPassWord" name="uPassWord" class="password" style="float: left" width="300px" placeholder="密码">
+                <button id="btn_denlu" style="float: left" width="300px">登陆</button>
+                <div class="error"><span>+</span></div>
+                </div>
+
+
+        </div>
+
+        <!-- Javascript -->
+        
+
+    </body>
+
+</html>
+

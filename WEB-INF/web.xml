@@ -1,0 +1,440 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns="http://java.sun.com/xml/ns/javaee" xmlns:web="http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
+	id="WebApp_ID" version="3.0">
+	<display-name>jTableJavaExample</display-name>
+	<welcome-file-list>
+		<welcome-file>2a1.html</welcome-file>
+	</welcome-file-list>
+
+	<!-- <welcome-file-list> <welcome-file>index.html</welcome-file> <welcome-file>index.htm</welcome-file> 
+		<welcome-file>index.jsp</welcome-file> <welcome-file>default.html</welcome-file> 
+		<welcome-file>default.htm</welcome-file> <welcome-file>default.jsp</welcome-file> 
+		</welcome-file-list> -->
+    
+    
+    <!-- log4j日志使用配置  start -->
+    <servlet>
+    <servlet-name>Log4jinit</servlet-name>
+    <servlet-class>com.sdpk.controller.Log4jinit</servlet-class>
+    <init-param>
+      <param-name>log4jxpp</param-name>
+      <param-value>WEB-INF/classes/log4j.properties</param-value>
+    </init-param>
+    <load-on-startup>0</load-on-startup>
+  </servlet>
+   <!-- log4j日志使用配置  end -->
+
+	<welcome-file-list>
+		<welcome-file>login.html</welcome-file>
+	</welcome-file-list>
+
+	<servlet>
+		<servlet-name>CRUDController</servlet-name>
+		<servlet-class>com.sdpk.controller.CRUDController</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>CRUDController</servlet-name>
+		<url-pattern>/CRUDController</url-pattern>
+	</servlet-mapping>
+	<!-- ContrtextController -->
+	<servlet>
+		<servlet-name>QueKeAllN</servlet-name>
+		<servlet-class>com.sdpk.query.controller.QueKeAllController</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>QueKeAllN</servlet-name>
+		<url-pattern>/aaQueKeAll</url-pattern>
+	</servlet-mapping>
+	<servlet>
+		<servlet-name>ContrtextController</servlet-name>
+		<servlet-class>com.sdpk.controller.ContrtextController</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>ContrtextController</servlet-name>
+		<url-pattern>/aaContrtext</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
+		<servlet-name>aaDepartmentN</servlet-name>
+		<servlet-class>com.sdpk.controller.DepartmentController</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>aaDepartmentN</servlet-name>
+		<url-pattern>/aaDepartment</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
+		<servlet-name>aaQueCountCtextN</servlet-name>
+		<servlet-class>com.sdpk.query.controller.QueCountCtextController</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>aaQueCountCtextN</servlet-name>
+		<url-pattern>/aaQueCountCtext</url-pattern>
+	</servlet-mapping>
+
+	<!-- ConPriceController -->
+	<servlet>
+		<servlet-name>ConPriceController</servlet-name>
+		<servlet-class>com.sdpk.controller.ConPriceController</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>ConPriceController</servlet-name>
+		<url-pattern>/CRUDController</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
+		<servlet-name>NameReCRoomController</servlet-name>
+		<servlet-class>com.sdpk.query.nameQuery.controller.NameReCRoomController</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>NameReCRoomController</servlet-name>
+		<url-pattern>/aaNameReCRoom</url-pattern>
+	</servlet-mapping>
+	<servlet>
+		<servlet-name>NameReCourController</servlet-name>
+		<servlet-class>com.sdpk.query.nameQuery.controller.NameReCourController</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>NameReCourController</servlet-name>
+		<url-pattern>/aaNameReCour</url-pattern>
+	</servlet-mapping>
+	<servlet>
+		<servlet-name>NameReClaController</servlet-name>
+		<servlet-class>com.sdpk.query.nameQuery.controller.NameReClaController</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>NameReClaController</servlet-name>
+		<url-pattern>/aaNameReCla</url-pattern>
+	</servlet-mapping>
+	<servlet>
+		<servlet-name>NameReContrController</servlet-name>
+		<servlet-class>com.sdpk.query.nameQuery.controller.NameReContrController</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>NameReContrController</servlet-name>
+		<url-pattern>/aaNameReContr</url-pattern>
+	</servlet-mapping>
+
+
+	<servlet>
+		<servlet-name>NameReEmpController</servlet-name>
+		<servlet-class>com.sdpk.query.nameQuery.controller.NameReEmpController</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>NameReEmpController</servlet-name>
+		<url-pattern>/aaNameReEmp</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
+		<servlet-name>NameReStuController</servlet-name>
+		<servlet-class>com.sdpk.query.nameQuery.controller.NameReStuController</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>NameReStuController</servlet-name>
+		<url-pattern>/aaNameReStu</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
+		<servlet-name>QueryKeMyController</servlet-name>
+		<servlet-class>com.sdpk.query.controller.QueryKeMyController</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>QueryKeMyController</servlet-name>
+		<url-pattern>/aaQueKeMy</url-pattern>
+	</servlet-mapping>
+
+
+	<servlet>
+		<servlet-name>aaQueKeHeadController</servlet-name>
+		<servlet-class>com.sdpk.query.controller.aaQueKeHeadController</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>aaQueKeHeadController</servlet-name>
+		<url-pattern>/aaQueKeHead</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
+		<servlet-name>QueryStuController</servlet-name>
+		<servlet-class>com.sdpk.query.controller.QueryStuController</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>QueryStuController</servlet-name>
+		<url-pattern>/aaQueryStu</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
+		<servlet-name>QueKeController</servlet-name>
+		<servlet-class>com.sdpk.query.controller.QueKeController</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>QueKeController</servlet-name>
+		<url-pattern>/aaQueKe</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
+		<servlet-name>MyTodPaikeController</servlet-name>
+		<servlet-class>com.sdpk.query.controller.MyTodPaikeController</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>MyTodPaikeController</servlet-name>
+		<url-pattern>/aaMyPaiKe</url-pattern>
+	</servlet-mapping>
+	<servlet>
+		<servlet-name>MyConController</servlet-name>
+		<servlet-class>com.sdpk.query.controller.MyConController</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>MyConController</servlet-name>
+		<url-pattern>/aaMyCon</url-pattern>
+	</servlet-mapping>
+	<servlet>
+		<servlet-name>MyStuController</servlet-name>
+		<servlet-class>com.sdpk.query.controller.MyStuController</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>MyStuController</servlet-name>
+		<url-pattern>/aaMyStu</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
+		<servlet-name>MyClaController</servlet-name>
+		<servlet-class>com.sdpk.query.controller.MyClaController</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>MyClaController</servlet-name>
+		<url-pattern>/aaMyCla</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
+		<servlet-name>RoleRsController</servlet-name>
+		<servlet-class>com.sdpk.system.controller.RoleResourceController</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>RoleRsController</servlet-name>
+		<url-pattern>/aaRoleResource</url-pattern>
+	</servlet-mapping>
+	<servlet>
+		<servlet-name>Resource</servlet-name>
+		<servlet-class>com.sdpk.system.controller.ResourceController</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>Resource</servlet-name>
+		<url-pattern>/aaResource</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
+		<servlet-name>aaname</servlet-name>
+		<servlet-class>com.sdpk.controller.aaControl</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>aaname</servlet-name>
+		<url-pattern>/aa</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
+		<servlet-name>ContractNew</servlet-name>
+		<servlet-class>com.sdpk.query.controller.ContractNewController</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>ContractNew</servlet-name>
+		<url-pattern>/aaContractNew</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
+		<servlet-name>aaStudentN</servlet-name>
+		<servlet-class>com.sdpk.controller.StudentControl</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>aaStudentN</servlet-name>
+		<url-pattern>/aaStudent</url-pattern>
+	</servlet-mapping>
+	<servlet>
+		<servlet-name>aaEmpname</servlet-name>
+		<servlet-class>com.sdpk.controller.EmployeeControl</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>aaEmpname</servlet-name>
+		<url-pattern>/aaEmp</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
+		<servlet-name>aaCourseN</servlet-name>
+		<servlet-class>com.sdpk.controller.CourseControl</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>aaCourseN</servlet-name>
+		<url-pattern>/aaCourse</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
+		<servlet-name>aaContractN</servlet-name>
+		<servlet-class>com.sdpk.controller.ContractControl</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>aaContractN</servlet-name>
+		<url-pattern>/aaContract</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
+		<servlet-name>aaClassRoomN</servlet-name>
+		<servlet-class>com.sdpk.controller.ClassRoomControl</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>aaClassRoomN</servlet-name>
+		<url-pattern>/aaClassRoom</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
+		<servlet-name>aaRoleN</servlet-name>
+		<servlet-class>com.sdpk.system.controller.RoleController</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>aaRoleN</servlet-name>
+		<url-pattern>/aaRole</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
+		<servlet-name>aaPaiKeN</servlet-name>
+		<servlet-class>com.sdpk.controller.PaikeRecordControl</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>aaPaiKeN</servlet-name>
+		<url-pattern>/aaPaiKe</url-pattern>
+	</servlet-mapping>
+
+
+	<servlet>
+		<servlet-name>aaClaN</servlet-name>
+		<servlet-class>com.sdpk.controller.ClaControl</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>aaClaN</servlet-name>
+		<url-pattern>/aaCla</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
+		<servlet-name>aaAnd_ClassEmpN</servlet-name>
+		<servlet-class>com.sdpk.controller.And_ClassEmpControl</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>aaAnd_ClassEmpN</servlet-name>
+		<url-pattern>/aaAnd_ClassEmp</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
+		<servlet-name>aaAnd_ClassStuN</servlet-name>
+		<servlet-class>com.sdpk.controller.And_ClassStuControl</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>aaAnd_ClassStuN</servlet-name>
+		<url-pattern>/aaAnd_ClassStu</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
+		<servlet-name>aaAnd_ClassCourseN</servlet-name>
+		<servlet-class>com.sdpk.controller.And_ClassCourseControl</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>aaAnd_ClassCourseN</servlet-name>
+		<url-pattern>/aaAnd_ClassCourse</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
+		<servlet-name>aaCourse_EmpN</servlet-name>
+		<servlet-class>com.sdpk.controller.Course_EmpControl</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>aaCourse_EmpN</servlet-name>
+		<url-pattern>/aaCourse_Emp</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
+		<servlet-name>aaClass_ContractN</servlet-name>
+		<servlet-class>com.sdpk.controller.Class_ContractControl</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>aaClass_ContractN</servlet-name>
+		<url-pattern>/aaClass_Contract</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
+		<servlet-name>aaUserPKN</servlet-name>
+		<servlet-class>com.sdpk.system.controller.UserPKControl</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>aaUserPKN</servlet-name>
+		<url-pattern>/aaUserPK</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
+		<servlet-name>aaUserPKpassN</servlet-name>
+		<servlet-class>com.sdpk.system.controller.UserPKpassController</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>aaUserPKpassN</servlet-name>
+		<url-pattern>/aaUserPKpass</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
+		<servlet-name>aaDengLuN</servlet-name>
+		<servlet-class>com.sdpk.controller.DengLuControl</servlet-class>
+	</servlet>
+	<servlet>
+		<description>This is the description of my J2EE component</description>
+		<display-name>This is the display name of my J2EE component</display-name>
+		<servlet-name>ResourceController</servlet-name>
+		<servlet-class>com.sdpk.controller.ResourceController</servlet-class>
+	</servlet>
+	<servlet>
+		<description>This is the description of my J2EE component</description>
+		<display-name>This is the display name of my J2EE component</display-name>
+		<servlet-name>RoleResourceController</servlet-name>
+		<servlet-class>com.sdpk.controller.RoleResourceController</servlet-class>
+	</servlet>
+	<servlet>
+		<description>This is the description of my J2EE component</description>
+		<display-name>This is the display name of my J2EE component</display-name>
+		<servlet-name>QueryController</servlet-name>
+		<servlet-class>com.sdpk.query.controller.QueryController</servlet-class>
+	</servlet>
+
+
+
+	<servlet-mapping>
+		<servlet-name>aaDengLuN</servlet-name>
+		<url-pattern>/aaDengLu</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>ResourceController</servlet-name>
+		<url-pattern>/servlet/ResourceController</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>RoleResourceController</servlet-name>
+		<url-pattern>/servlet/RoleResourceController</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>QueryController</servlet-name>
+		<url-pattern>/aaQuery</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
+		<servlet-name>aaMyContrtextN</servlet-name>
+		<servlet-class>com.sdpk.query.controller.MyContrtextController</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>aaMyContrtextN</servlet-name>
+		<url-pattern>/aaMyContrtext</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
+		<servlet-name>aaQueryMonthHead</servlet-name>
+		<servlet-class>com.sdpk.query.controller.MonthHeadController</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>aaQueryMonthHead</servlet-name>
+		<url-pattern>/aaQueryMonthHead</url-pattern>
+	</servlet-mapping>
+
+</web-app>

@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>Basic Form - jQuery EasyUI Demo</title>
+	<script type="text/javascript" src="jquery-easyui-136/jquery.min.js"></script>
+	<script type="text/javascript" src="jquery-easyui-136/jquery.easyui.min.js"></script>
+	<script type="text/javascript" src="jquery-easyui-136/locale/easyui-lang-zh_CN.js"></script>
+	<script type="text/javascript" src="js-sub-xpp/2a2-stuCrud.js"></script>
+	
+	<link   rel="stylesheet" type="text/css" href="jquery-easyui-136/themes/gray/easyui.css"/>
+	<link   rel="stylesheet" type="text/css" href="jquery-easyui-136/themes/icon.css"/>
+</head>
+<body>
+	
+	<div class="easyui-panel"   data-options="fit:true,"  >
+		
+	    <form id="ff" method="post"  style="width:100%;text-align:center;position: absolute;top: 20%;left: 35%">
+	    	<table cellpadding="5">
+	    		<tr>
+	    			<td>姓名:</td>
+	    			<td><input class="easyui-validatebox textbox" type="text" name="name" data-options="required:true"></input></td>
+	    		</tr>
+	    		<tr>
+	    			<td>学号:</td>
+	    			<td><input class="easyui-validatebox textbox" type="text" name="email" data-options="required:true,validType:'email'"></input></td>
+	    		</tr>
+	    		<tr>
+	    			<td>学校:</td>
+	    			<td><input class="easyui-validatebox textbox" type="text" name="subject" data-options="required:true"></input></td>
+	    		</tr>
+	    		<tr>
+	    			<td>年级:</td>
+	    			<td><input class="textbox" name="message"></input></td>
+	    		</tr>
+	    		<tr>
+	    			<td>手机号:</td>
+	    			<td><input class="textbox" name="message"></input></td>
+	    		</tr>
+	    		<tr>
+	    			<td>报名日期:</td>
+	    			<td><input class="textbox" name="message"></input></td>
+	    		</tr>
+	    		<tr>
+	    			<td>家长姓名:</td>
+	    			<td><input class="textbox" name="message"></input></td>
+	    		</tr>
+	    		<tr>
+	    			<td>家长电话:</td>
+	    			<td><input class="textbox" name="message"></input></td>
+	    		</tr>
+	    		<tr>
+	    			<td>家庭住址:</td>
+	    			<td><input class="textbox" name="message"></input></td>
+	    		</tr>
+	    		<tr>
+	    			<td>备注:</td>
+	    			<td><input class="textbox" name="message"></input></td>
+	    		</tr>
+	    	</table>
+	    </form>
+	    <div style="text-align:center;position: absolute;top: 80%;left: 41%;padding:5px">
+	    	<a href="javascript:void(0)" class="easyui-linkbutton" onclick="submitForm()">Submit</a>
+	    	<a href="javascript:void(0)" class="easyui-linkbutton" onclick="clearForm()">Clear</a>
+	    </div>
+	 
+	</div>
+	<style scoped="scoped">
+		.textbox{
+			height:20px;
+			margin:0;
+			padding:0 2px;
+			box-sizing:content-box;
+		}
+	</style>
+	<script>
+		function submitForm(){
+			$('#ff').form('submit');
+		}
+		function clearForm(){
+			$('#ff').form('clear');
+		}
+	</script>
+</body>
+</html>

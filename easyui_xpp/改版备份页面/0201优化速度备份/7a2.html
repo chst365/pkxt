@@ -1,0 +1,1102 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>合同展示</title>
+	
+    <script type="text/javascript" src="jquery-easyui-136/jquery.min.js"></script>
+    <script type="text/javascript" src="../xppjs/jquery.cookie.js"></script>
+	<script type="text/javascript" src="jquery-easyui-136/jquery.easyui.min.js"></script>
+	<script type="text/javascript" src="jquery-easyui-136/locale/easyui-lang-zh_CN.js"></script>
+    <script type="text/javascript" src="DataTables/datatables.js"></script>
+    <script type="text/javascript" src="../xppjs/jquery.serialize-object.js"></script>
+	
+	<link   rel="stylesheet" type="text/css" href="jquery-easyui-136/themes/gray/easyui.css"/>
+	<link   rel="stylesheet" type="text/css" href="jquery-easyui-136/themes/icon.css"/>
+    <link   rel="stylesheet" type="text/css" href="DataTables/datatables.css"/>
+    <link   rel="stylesheet" type="text/css" href="../HMcode/HMcss/7a2.css"/>
+
+
+
+
+    <style>
+        .dataTables_wrapper{
+            top:-67px;
+        }
+        #dialog .dataTables_wrapper{
+            top:0;
+            width:890px;
+        }
+        #dialog  #example_filter{
+            display: none;
+        }
+        .dataTables_wrapper .dataTables_info{
+            clear: none;
+            float: right;
+            padding-right: 20px;
+            margin-top:20px;
+            font-size: 16px;
+        }
+        .dataTables_wrapper .dataTables_paginate{
+            float: right;
+        }
+        table.dataTable thead th, table.dataTable thead td, table.dataTable tfoot th, table.dataTable tfoot td{
+            text-align: center;
+        }
+        .dataTables_wrapper .dataTables_paginate .paginate_button{
+            border:1px solid transparent;
+        }
+        .dataTables_wrapper .dataTables_paginate .paginate_button:hover{
+            border:1px solid transparent;
+        }
+        .dataTables_wrapper .dataTables_paginate .paginate_button:active{
+            box-shadow: none;
+        }
+        .dataTables_wrapper .dataTables_paginate .paginate_button.current, .dataTables_wrapper .dataTables_paginate .paginate_button.current:hover{
+            border:1px solid transparent;
+        }
+        table.dataTable.display tbody tr.even td.sorting_1{
+            background-color: white;
+        }
+    </style>
+
+    <!-- <script src="../js/jquery-1.8.2.js" type="text/javascript"></script> -->
+
+
+	<script type="text/javascript">
+        var tabledata={};
+        var tabShowText = {};
+        var  tablePrice = {};
+
+    $(document).ready(function() {
+        //按钮权限开始
+        function funBtn(){
+            $( "#delbut" ).hide();
+            $( "#opener" ).hide();
+
+            var viewArr = $.cookie("rsList").split(",");
+            for (var i = 0; i < viewArr.length; i++) {
+//                if(viewArr[i]=="Gb2") {$( "#delbut" ).show();}
+                if(viewArr[i]=="Gb1") {$( "#opener" ).show();}
+            }//end for
+        }
+        funBtn();
+        /*第零步：把datatables插件的警告窗变成控制台打印*/
+        $.fn.dataTable.ext.errMode = 'none';
+        // var tabShowText,tablePrice;
+    //步骤1,展示列表数据
+    var tableMain = $('#exampleMain').DataTable( {
+        "dom":'frtpi',
+        "bLengthChange":false,
+         bSort:true,
+        language: {
+            "sProcessing": "处理中...",
+            "sLengthMenu": "显示 _MENU_ 项结果",
+            "sZeroRecords": "没有匹配结果",
+            "sInfo": "共 _TOTAL_ 项",
+            "sInfoEmpty": "共 0 项",
+            "sInfoFiltered": "(由 _MAX_ 项结果过滤)",
+            "sInfoPostFix": "",
+            "sSearch": "搜索:",
+            "sUrl": "",
+            "sEmptyTable": "表中数据为空",
+            "sLoadingRecords": "载入中...",
+            "sInfoThousands": ",",
+            "oPaginate": {
+                "sFirst": "首页",
+                "sPrevious": "上页",
+                "sNext": "下页",
+                "sLast": "末页"
+            },
+            "oAria": {
+                "sSortAscending": ": 以升序排列此列",
+                "sSortDescending": ": 以降序排列此列"
+            }
+        },//国际化语言结束
+        "ajax": "/sdpk/aaContrtext?qqiu=list",
+        "columns": [
+            { "data": "cNum" },
+            { "data": "stuName" },
+            { "data": "nameTcname" },
+            { "data": "cDate" },
+            { "data": "org" },
+            { "data": "totalCount" },
+            { "data": "totalPrice" },
+            {
+                "data": null,
+                "searchable": true,
+                "title": "状态"
+            }
+        ],
+        "columnDefs":[{
+            "targets": -1,
+            "data": tabShowText,
+            "name": "状态",
+            "cellType": "th",
+            "orderDataType": "dom-text",
+            "orderSequence": [ "desc","asc", "asc" ],
+            "className": "my_class",
+            "contentPadding": "mmm",
+            "createdCell": function (td, cellData, rowData, row, col) {
+                console.log(cellData);
+                if ( cellData.openAndclose == 'open' ) {
+                    tabShowText = '已开启';
+                    $(td).context.innerHTML="<button style='color: white;border:none;border-radius: 5px;background-color: #36cb91;line-height: 30px;text-align: center;width: 100px;font-size: 14px;'>"+ tabShowText +"</button>";
+
+                }else{
+                    tabShowText = '已关闭';
+                    $(td).context.innerHTML="<button style='color: white;border:none;border-radius: 5px;background-color: #ff4949;line-height: 30px;text-align: center;width: 100px;font-size: 14px;'>"+ tabShowText +"</button>";
+
+                }
+            }
+
+
+        }]
+    } );//end 步骤1 外圈  $('#examplePrice').DataTable
+        //        按钮事件
+        $('#exampleMain tbody').on( 'click', 'button', function () {
+            var send_data = {};
+            send_data.uuid = tableMain.row( $(this).parents('tr') ).data().uuid;
+            tableMain.row( $(this).parents('tr') ).data().openAndclose == 'open'?send_data.openAndclose = 'close':send_data.openAndclose = 'open';
+            console.log(send_data);
+            $.ajax({
+                url:"/sdpk/aaContrtext?qqiu=on_off",
+                type: "POST",
+                //data: JSON.stringify(param),
+                data: JSON.stringify(send_data),
+                contentType: "application/json;charset=UTF-8",
+                success:function(result){
+                    var obj = JSON.parse(result);
+                    alert(obj.message);
+                    tableMain.row( $(this).parents('tr') ).ajax.reload();
+
+                }
+
+            });//end $.ajax
+        } );
+    //步骤2，列表选择
+    var selectTable = $('#exampleMain tbody').on( 'click', 'tr', function () {
+        if ( $(this).hasClass('selected') ) {
+            $(this).removeClass('selected');
+        }
+        else {
+            tableMain.$('tr.selected').removeClass('selected');
+            $(this).addClass('selected');
+        }//end if
+
+    } );//end 2 外圈 $('#examplePrice tbody').on
+
+    //步骤3，删除按钮单击事件
+    $('#delbut').click( function () {
+
+        //要初始化一个对象，不然会报undifine未定义错误
+        var delRowData = {};
+        //获取选择那一行的数据
+         delRowData = tableMain.row('.selected').data();
+         //获取选择行中的uuid字段
+         var Auuid = delRowData.uuid;
+
+         //post请求体传给后台的js对象
+         var send_data = {};
+         send_data.uuid = Auuid;
+         // alert( "选择的行的uuid: "+send_data);
+         //调用ajax方法传给后台接口
+         $.ajax({
+
+                url:"/sdpk/aaContrtext?qqiu=delete",
+                type: "POST",
+                //data: JSON.stringify(param),
+                data: JSON.stringify(send_data),
+                contentType: "application/json;charset=UTF-8",
+                success:function(result){
+                    var obj = JSON.parse(result);
+                    alert(obj.message);
+                    window.location.reload();
+
+                }
+
+            });//end $.ajax
+
+         tableMain.row('.selected').remove().draw( false );//图形删除，没有传到后台接口
+    } );//end 3 外圈 $('#delbut').click
+
+    //步骤4，对话框初始配置
+    $( "#dialog" ).dialog({
+      autoOpen: false,
+      show: {
+        effect: "blind",
+        duration: 1000
+      },
+      hide: {
+        effect: "explode",
+        duration: 1000
+      }
+    });//end 4 外圈 dialog
+    //步骤4，对话框初始配置
+    $( "#dialogSave" ).dialog({
+            autoOpen: false,
+            show: {
+                effect: "blind",
+                duration: 1000
+            },
+            hide: {
+                effect: "explode",
+                duration: 1000
+            }
+        });//end 4 外圈 dialogSave
+
+        var send_R4 = {};
+        send_R4.id = "uuid";
+        send_R4.claUuid = "name";
+        $.ajax({
+
+            url:"/sdpk/aaStudent?qqiu=list",
+            type: "POST",
+            //data: JSON.stringify(param),
+            data: JSON.stringify(send_R4),
+            contentType: "application/json;charset=UTF-8",
+            success:function(result){
+                // console.log(result);
+                //步骤1_a1，在步骤1的ajax的回调函数
+                huiFuncR4(result);
+                // alert("下拉框加载完成");
+            }
+
+        });
+        //步骤1_xR3，在步骤1的ajax的回调函数,展示列表数据
+        function huiFuncR4(result){
+            // alert("回调中");
+            var objR4 = {};
+            objR4 = JSON.parse(result);
+            var a2dataR4 = objR4.data;
+            console.log(a2dataR4);
+            // for(var i=0;i<a2dataR4.length;i++){
+            //     $('#stuUuid').append('<option value="'+a2dataR4[i].uuid+'">'+a2dataR4[i].name+'</option>')
+            // }
+            $('#stuUuid').combobox({
+                data: a2dataR4,
+                valueField: 'uuid',
+                textField: 'name',
+                selectOnNavigation: false
+            });
+
+        }// end 1_x1 外圈
+        //end 1 加载所有下拉框 结束
+    //步骤5，编辑打开事件
+    $( "#opener" ).click(function() {
+
+        data2a=[];
+
+        //要初始化一个对象，不然会报undifine未定义错误
+        var delRowData = {},date={};
+        //获取选择那一行的数据
+         delRowData = tableMain.row('.selected').data();
+         tabledata = delRowData;
+         console.log(tabledata);
+        $.fn.dataTable.ext.errMode = 'none';
+        for(var i=0;i<tabledata.conPriceList
+            .length;i++){
+            date = {
+                "onePriceA":tabledata.conPriceList[i].onePriceA,
+                "countA":tabledata.conPriceList[i].countA,
+                "delPriceA":tabledata.conPriceList[i].delPriceA,
+                "countGiveA":tabledata.conPriceList[i].countGiveA,
+                "priceType":tabledata.conPriceList[i].priceType=='LineUpA'?'线上':'线下',
+                "sumPriceA":tabledata.conPriceList[i].sumPriceA,
+                "sumCountA":tabledata.conPriceList[i].sumCountA
+            }
+            data2a.push(date);
+        }
+
+        RowDataList = date;
+         console.log(data2a);
+
+        //步骤1,展示列表数据
+         tablePrice = $('#examplePrice').DataTable( {
+            "dom":'frtpi',
+            "bLengthChange":false,
+             "destroy": true,
+             searching : false,
+             bSort:false,
+            language: {
+                "sProcessing": "处理中...",
+                "sLengthMenu": "显示 _MENU_ 项结果",
+                "sZeroRecords": "没有匹配结果",
+                "sInfo": "共 _TOTAL_ 项",
+                "sInfoEmpty": "共 0 项",
+                "sInfoFiltered": "(由 _MAX_ 项结果过滤)",
+                "sInfoPostFix": "",
+                "sSearch": "搜索:",
+                "sUrl": "",
+                "sEmptyTable": "表中数据为空",
+                "sLoadingRecords": "载入中...",
+                "sInfoThousands": ",",
+                "oPaginate": {
+                    "sFirst": "首页",
+                    "sPrevious": "上页",
+                    "sNext": "下页",
+                    "sLast": "末页"
+                },
+                "oAria": {
+                    "sSortAscending": ": 以升序排列此列",
+                    "sSortDescending": ": 以降序排列此列"
+                }
+            },//国际化语言结束
+            "data": data2a,
+            "columns": [
+                {"data": "onePriceA"},
+                {"data": "countA"},
+                {"data": "delPriceA"},
+                {"data": "countGiveA"},
+                {"data": "priceType"},
+                {"data": "sumPriceA"},
+                {"data": "sumCountA"}
+            ]
+        } );//end 步骤1 外圈  $('#examplePrice').DataTable
+
+         document.ffname.cNum.value= delRowData.cNum;
+         // document.ffname.stuUuid.value= delRowData.stuUuid;
+        $('#stuUuid').combobox('setValue', delRowData.stuUuid);
+         document.ffname.cDate.value= delRowData.cDate;
+         var dateTime = delRowData.cDate;
+         $('#cDate').datebox('setValue', dateTime);
+         document.ffname.org.value= delRowData.org;
+         document.ffname.cRemark.value= delRowData.remark;
+         document.ffname.totalCount.value= delRowData.totalCount;
+         document.ffname.totalPrice.value= delRowData.totalPrice;
+         document.ffname.sumLineDownB.value= delRowData.sumLineDownB;
+         document.ffname.sumLineUpA.value= delRowData.sumLineUpA;
+         document.ffname.onePriceA.value= delRowData.onePriceA;
+         //用了easyui的插件，要调用easyui的方式赋值
+         var ca= delRowData.countA;
+         $("#countA").numberbox('setValue',0);
+         //用了easyui的插件，要调用easyui的方式赋值
+         var da= delRowData.delPriceA;
+         $("#delPriceA").numberbox('setValue',0);
+         //用了easyui的插件，要调用easyui的方式赋值
+         var cga= delRowData.countGiveA;
+         $("#countGiveA").numberbox('setValue',0);
+        $("#onePriceA").numberbox('setValue',0);
+        //用了easyui的插件，要调用easyui的方式赋值
+        $("#sumPriceA").numberbox('setValue',0);
+        //用了easyui的插件，要调用easyui的方式赋值
+        $("#sumCountA").numberbox('setValue',0);
+        //用了easyui的插件，要调用easyui的方式赋值
+
+
+
+        var n1 = document.ffname.cNum.value; //定义个变量n接收表单中的值
+
+        //调用父级弹窗end
+      $( "#dialog" ).dialog( "open" );
+
+    });//end 5 外圈 opener 结束打开对话框
+
+        // //选择事件写在函数体外
+        // var selectTable = $('#examplePrice tbody tr').click(function () {
+        //     if ($(this).hasClass('selected')) {
+        //         $(this).removeClass('selected');
+        //     }
+        //     else {
+        //         tablePrice.$('tr.selected').removeClass('selected');
+        //         $(this).addClass('selected');
+        //
+        //     }//end if
+        //
+        // });//end 2 外圈 $('#examplePrice tbody').on
+
+        //步骤2，列表选择
+        var selectTable = $('#examplePrice tbody').on( 'click', 'tr', function () {
+            if ( $(this).hasClass('selected') ) {
+                $(this).removeClass('selected');
+            }
+            else {
+                tablePrice.$('tr.selected').removeClass('selected');
+                $(this).addClass('selected');
+            }//end if
+
+        } );//end 2 外圈 $('#examplePrice tbody').on
+
+
+        //步骤-金额表新的删除，删除按钮单击事件
+        $('#delbu').click( function () {
+
+            tablePrice.row('.selected').remove().draw( false );//图形删除，没有传到后台接口
+        } );//end 3 外圈 $('#delbut').click
+
+
+
+
+    //步骤7，关闭修改对话框
+    $( "#close" ).click(function() {
+
+        $( "#dialog" ).dialog( "close" );
+        $('#ff').form('clear');
+        tablePrice.clear().draw();//图形清空
+        data2a.length=0;//数据清空
+        });//end 7 外圈 close
+
+    //步骤7，关闭修改对话框
+    $( "#closeSave" ).click(function() {
+        $( "#dialogSave" ).dialog( "close" );
+    });//end 7 外圈 close
+    //步骤8，点击保存
+    $( "#submitSave" ).click(function() {
+        $( "#dialogSave" ).dialog( "close" );
+            var param = $("#ff").serializeObject();
+            param.uuid = tabledata.uuid;
+            param.cNum = document.getElementById("cNum").value;
+            param.remark = document.getElementById("cRemark").value;
+            param.stuUuid = $('#stuUuid').combobox("getValues")[0];
+            param.cDate = $("#cDate").datebox("getValue");
+            param.org = document.getElementById("org").value;
+            param.totalCount = document.getElementById("totalCount").value;
+            param.totalPrice = document.getElementById("totalPrice").value;
+            param.sumLineDownB = document.getElementById("sumLineDownB").value;
+            param.sumLineUpA = document.getElementById("sumLineUpA").value;
+            param.conPriceList = [];
+            // RowsDataList = RowDataList || tablePrice.rows().data();
+            if(RowDataList.length){
+                RowsDataList = tablePrice.rows().data();
+            }else{
+                RowsDataList = RowDataList;
+            }
+            console.log(RowDataList.length);
+            for (var i = 0; i < RowsDataList.length; i++) {
+                if (RowsDataList[i].priceType == '线上') {
+                    RowsDataList[i].priceType = 'LineUpA';
+                } else if (RowsDataList[i].priceType == '线下') {
+                    RowsDataList[i].priceType = 'LineDownB';
+                }
+                param.conPriceList.push(RowsDataList[i]);
+            }
+            console.log(param);
+            $.ajax({
+
+                url:"/sdpk/aaContrtext?qqiu=edit",
+                type: "POST",
+                data: JSON.stringify(param),
+                // data: JSON.stringify(send_edit_data),
+                contentType: "application/json;charset=UTF-8",
+                success:function(result){
+                    result = JSON.parse(result);
+                    alert(result.message);
+                    $( "#dialog" ).dialog( "close" );
+                    window.location.reload();
+                }
+
+            });
+
+    });//end 7 外圈 close
+
+
+
+    } );//end 最外层 $(document).ready
+
+
+        function clearForm(){
+            $('#ff').form('clear');
+        };//end function clearForm
+
+    </script>
+
+	<style type="text/css">
+		*{
+    		font-family:"黑体";
+    	}
+
+	</style>
+</head>
+<body style="overflow-x：hidden;">
+
+	<div id="fen3a3_container" class="tab-con">
+
+		<div id="ye_1_blank" ></div>
+		<div id="ye_2_blank" ></div>
+
+		<div id="ye_3_text_container" >
+			<div id="header_1" >
+            <h2 >合同管理</h2></div>
+            <!-- 留空开始 -->
+	    	<div style="background-color:#FFFFFF;width:500px;height: 30px;float:left;box-sizing:border-box;position: relative;z-index: 999;">
+
+			<button id="delbut" class="btn-class" style="display: none">删除</button>
+            <button id="opener" class="btn-class">编辑</button>
+	    	</div>
+			<!-- 留空结束 -->
+
+                    <!--start div id="listTable" 列表展示开始 -->
+            		<div id="listTable" >
+                    <table id="exampleMain" class="display tab-mians" cellspacing="0" width="100%">
+                        <thead class="tab-tit">
+                            <tr>
+                                <th>合同编号</th>
+                                <th>学生</th>
+                                <th>别名</th>
+                                <th>交易时间</th>
+                                <th>校区</th>
+                                <th>总课数</th>
+                                <th>总支付</th>
+                                <th>状态</th>
+                            </tr>
+                        </thead>
+                        <tfoot class="tab-tit">
+                        <tr>
+                            <th>合同编号</th>
+                            <th>学生</th>
+                            <th>别名</th>
+                            <th>交易时间</th>
+                            <th>校区</th>
+                            <th>总课数</th>
+                            <th>总支付</th>
+                            <th>状态</th>
+                        </tr>
+                        </tfoot>
+
+                        <tbody></tbody>
+                    </table>
+
+
+                    </div><!--end div id="listTable" 列表展示结束 -->
+
+
+
+
+
+		</div><!-- end div id="ye_3_text_container" -->
+
+	</div><!-- end div  id="fen3a3_container"-->
+
+    <div id="dialog" title="编辑合同" closed="true" style="width:965px;height: 690px;padding-left:20px;">
+                <!--<p>这是一个动画显示的对话框</p>-->
+                <form id="ff" name="ffname" method="post" >
+                <table id="header_3_tb1" class="tab-style">
+                    <!-- 第一行 -->
+                    <tr>
+                    <td class="name-s" style="padding-left:0">合同编号</td>
+                    <td><input  type="text" id="cNum" name="cNum" class="v1g3 yzss" style="height: 39px;width: 815px;font-size:16px;" value="输入合同编号"></td>
+                    </tr>
+                    <!-- 第一行结束 -->
+
+                </table> <!-- end id为 header_3_tb1 -->
+
+                <table id="header_3_tb2"  class="tab-style">
+                    <!-- 第一行 -->
+                    <tr>
+                    <td class="name-s" style="padding-left:0">学生名称</td>
+                    <td>
+                        <!--<input  type="text" id="stuUuid" name="stuUuid" class="v1g3 yzss" value="请选择学生">-->
+                        <!--<select name="stuUuid" id="stuUuid"class="yzss sel_s"></select>-->
+                        <input id="stuUuid" name="stuUuid" data-options="editable:true" class="easyui-combobox " style="width: 200px; height: 36px; display: none;" comboname="stuUuid">
+
+                    </td>
+                    <td class="name-s">交易时间</td>
+                    <td style="width: 115px;height: 27px;font-size:16px;"><input id="cDate" name="cDate" type="text" class="easyui-datebox" required="required" style="line-height: 34px; height:36px;background-color: white;"></td>
+
+                    <td class="name-s">校区组织</td>
+                    <td>
+                        <!--<input  type="text" id="org" name="org" class="v1g3 yzss" value="请输入校区组织">-->
+                        <select id="org" name="org" class="yzss sel_s">
+                            <option value="所有校区">所有校区</option>
+                            <option value="企业公馆校区">企业公馆校区</option>
+                        </select>
+                    </td>
+                    </tr>
+                    <tr>
+                        <td class="name-s" style="padding-left:0">合同备注</td>
+                        <td><input  type="text" id="cRemark" name="cRemark" class=" v1g3 yzss"  style="height: 39px;width: 815px;font-size:16px;"></td>
+                    </tr>
+                    </table><!-- end  id= header_3_tb2 -->
+
+                    <!-- 划线说明 -->
+                    <div class="tit_style">
+                        <h3>金额</h3>
+                    </div><!-- 划线说明结束 -->
+
+
+                    <table id="header_3_tb3"  class="tab-style">
+                    <!-- 类型一(价格A)第一行 -->
+                    <tr>
+                        <td class="name-s" style="padding-left:0">单&nbsp;&nbsp;&nbsp;&nbsp;价</td>
+                    <td>
+
+                        <input type="text"id="onePriceA"  name="onePriceA" class="easyui-numberbox yzss "style="height:36px; line-height: 34px;"  data-options="min:0,max:999999,value: 0,editable:true">
+                    </td>
+
+                    <td class="name-s">数&nbsp;&nbsp;&nbsp;&nbsp;量</td>
+                    <td ><input id="countA" name="countA" class="easyui-numberbox yzss" style="height:36px; line-height: 34px;"  data-options="min:0,max:999999,value: 0,editable:true" ></td>
+                    </tr><!-- 第一行结束 -->
+                    <!--类型一(价格A) 第二行 -->
+                    <tr>
+                        <td class="name-s" style="padding-left:0;">优惠金额</td>
+                    <td ><input id="delPriceA" name="delPriceA" class="easyui-numberbox yzss" style="height:36px; line-height: 34px;"  data-options="min:0,max:999999,value: 0,editable:true" ></td>
+
+                    <td class="name-s">送课次数</td>
+                    <td ><input id="countGiveA" name="countGiveA" class="easyui-numberbox yzss" style="height:36px; line-height: 34px;"  data-options="min:0,max:999999,value: 0,editable:true" ></td>
+                    </tr><!-- 第二行结束 类型一(价格A)-->
+
+                    <!--类型一(价格A) 第三行 -->
+                    <tr>
+                        <td   class="name-s txt_red" style="padding-left:0">支付金额</td>
+                    <td ><input id="sumPriceA" name="sumPriceA"  class="easyui-numberbox yzss border_red" required="required"  disabled="true" value="0"></td>
+
+                    <td class="name-s txt_red">上课次数</td>
+                    <td ><input id="sumCountA" name="sumCountA" class="easyui-numberbox yzss border_red" required="required"  disabled="true" value="0"></td>
+                    <td class="name-s">上课类型</td>
+                    <td ><select id="priceType"  name="priceType" class="yzss sel_s"  required="required">-->
+                        <option>请选择上课类型</option>
+                        <option value="LineUpA">线上</option>
+                        <option value="LineDownB">线下</option>
+                    </select></td>
+                    </tr><!-- 第三行结束 -->
+                    </table><!-- end id  header_3_tb3-->
+
+                            <div class="btn-box"style="text-align: left;margin-bottom: 20px;margin-left: 5px;">
+                                <a href="javascript:void(0)" class="easyui-linkbutton btn-qr" style="margin-left: 0;" id="addBtn" >添加</a>
+                                <a href="javascript:void(0)" class="easyui-linkbutton btn-qr" id="delbu" >删除</a>
+                            </div>
+                    <div id="header_2">
+                    </div><!-- 划线结束 -->
+                    <div id="listTable" >
+                        <table id="examplePrice" class="display tab-mians" cellspacing="0" width="100%">
+                            <thead class="tab-tit">
+                            <tr>
+                                <th style="min-width:140px;">单价</th>
+                                <th style="min-width:100px;">数量</th>
+                                <th style="min-width:100px;">优惠金额</th>
+                                <th style="min-width:100px;">送课次数</th>
+                                <th style="min-width:100px;">上课类型</th>
+                                <th style="min-width:100px;">支付金额</th>
+                                <th style="min-width:100px;">上课次数</th>
+                            </tr>
+                            </thead>
+                            <tfoot class="tab-tit">
+                            <tr>
+                                <th style="min-width:140px;">单价</th>
+                                <th style="min-width:100px;">数量</th>
+                                <th style="min-width:100px;">优惠金额</th>
+                                <th style="min-width:100px;">送课次数</th>
+                                <th style="min-width:100px;">上课类型</th>
+                                <th style="min-width:100px;">支付金额</th>
+                                <th style="min-width:100px;">上课次数</th>
+                            </tr>
+                            </tfoot>
+
+                         <tbody></tbody>
+                        </table>
+
+
+                    </div><!--end div id="listTable" 列表展示结束 -->
+
+                    <table id="header_3_tb4" class="tab-style">
+                        <!-- 类型二(价格B)第三行 -->
+                        <tr>
+                            <td class="name-s txt_red" style="padding-left: 0;">线下次数</td>
+                            <td ><input id="sumLineDownB" name="sumLineDownB" class="yzss border_red" required="required"  disabled="true" value="0"></td>
+                            <td class="name-s txt_red"style="padding-left: 82px;">线上次数</td>
+                            <td ><input id="sumLineUpA" name="sumLineUpA" class="yzss border_red" required="required"  disabled="true" value="0"></td>
+                        </tr>
+                        <tr>
+                            <td class="name-s txt_red" style="padding-left: 0;padding-right:2px;">总&nbsp;支&nbsp;付&nbsp;</td>
+                            <td ><input id="totalPrice" name="totalPrice" required="required"  disabled="true" value="0" class="yzss border_red"></td>
+                            <td class="name-s txt_red"style="padding-left: 82px;padding-right: 2px;">总&nbsp;次&nbsp;数&nbsp;</td>
+                            <td ><input id="totalCount" name="totalCount" class="yzss border_red" required="required"  disabled="true" value="0"></td>
+                            <td class="name-s" style="padding-left: 108px;padding-right: 0;display:none;" ><a style="padding:0 50px;"href="javascript:void(0)" class="easyui-linkbutton btn-qr" style="padding:0 60px;"id="talBtn" >计算</a></td>
+                        </tr>
+
+                        <tr>
+
+                            <td class="name-s"></td>
+
+                        </tr>
+                        <!-- 第三行结束 -->
+                    </table><!-- end id  header_3_tb4-->
+
+                </form>
+                <!-- 按钮div开始 -->
+                <div class="btn-box" style="margin-right: 25px;padding-bottom: 20px;">
+                    <button  class="easyui-linkbutton btn-xk" id="close">关闭</button>
+                    <button  class="easyui-linkbutton btn-qr" id="submitForm" >确认</button>
+                 </div>
+                 <!-- 按钮div结束 -->
+    </div><!-- end id=dialog -->
+    <div id="dialogSave"title="保存" closed="true" style="width:700px;height: 300px;padding-left:20px;">
+        <table id="header_3_tb5" class="tab-style">
+            <!-- 类型二(价格B)第三行 -->
+            <tr>
+                <td class="name-s txt_red" style="padding-left: 0;">线下次数</td>
+                <td ><input id="DownB" name="DownB" class="yzss border_red" required="required"  disabled="true" value="0"></td>
+                <td class="name-s txt_red"style="padding-left: 82px;">线上次数</td>
+                <td ><input id="UpA" name="UpA" class="yzss border_red" required="required"  disabled="true" value="0"></td>
+            </tr>
+            <tr>
+                <td class="name-s txt_red" style="padding-left: 0;padding-right:2px;">总&nbsp;支&nbsp;付&nbsp;</td>
+                <td ><input id="talPrice" name="talPrice" required="required"  disabled="true" value="0" class="yzss border_red"></td>
+                <td class="name-s txt_red"style="padding-left: 81px;padding-right: 9px;">总&nbsp;次&nbsp;数</td>
+                <td ><input id="talCount" name="talCount" class="yzss border_red" required="required"  disabled="true" value="0"></td>
+            </tr>
+
+            <tr>
+
+                <td class="name-s"></td>
+
+            </tr>
+            <!-- 第三行结束 -->
+        </table><!-- end id  header_3_tb4-->
+        <div class="btn-box" style="margin-right: 30px;padding-bottom: 20px;">
+            <button  class="easyui-linkbutton btn-xk" id="closeSave">返回修改</button>
+            <button  class="easyui-linkbutton btn-qr" id="submitSave" >点击保存</button>
+        </div>
+    </div>
+    <!-- *********隔离线*************************** -->
+    <!-- 验证的js脚本 -->
+    <script>
+
+        //验证第一二行中的3个输入框
+        var data2a = [],uuid;
+        var tableMain ={};
+        var RowDataList = {},RowsDataList = {};
+
+        $(document).ready(function() {
+
+        function yzV1(){
+                var m = {};
+                // m=document.getElementsByTagName("input");
+                m=document.getElementsByClassName("v1g3");
+
+                for(var i=0;i<m.length;i++)
+                {
+                        if(m[i].value==""||m[i].value==null)
+                        {
+                            alert("请填写输入框的值(前两行)"+m[i].id);
+                            return false;
+                        }
+                }//end for
+                return true;
+            }
+        //验证日期输入框
+        function yzDate(){
+                var m = {};
+                // m=document.getElementsByTagName("input");
+                m=document.getElementById("cDate");
+                var c1 = $("#cDate").datebox("getValue");
+
+
+                        if(c1==""||c1==null)
+                        {
+                            alert("请填写日期框"+c1+"的值");
+                            return false;
+                        }
+                return true;
+            }
+            //验证6个数字框
+            function yzNumBox(){
+                var m = {};
+                // m=document.getElementsByTagName("input");
+                m=document.getElementsByClassName("easyui-numberbox");
+
+                for(var i=0;i<m.length;i++)
+                {
+                        if(m[i].value==""||m[i].value==null)
+                        {
+                            alert("请填写数字输入框的值(类型中)"+m[i].id);
+                            return false;
+                        }
+                }//end for
+                return true;
+            }
+            //验证上课类型
+            function yzSkSize(){
+                if(document.getElementById("priceType").value=='请选择上课类型'){
+                    alert('请选择上课类型');
+                    return false;
+                }else{
+                    return true;
+                }
+            }
+
+
+            //submitForm
+
+            $( "#submitForm" ).click(function() {
+
+
+            var flag = false;
+            var f1 = yzV1();
+            var f2 = yzDate();
+            var f3 = yzNumBox();
+            var f4 = yzSkSize();
+
+            talpri();
+            //总价格，总课数计算结束
+            $( "#dialogSave" ).dialog( "open" );
+            if($( "#dialogSave" ).is(":hidden")){
+                if (f1 == true && f2 == true && f3 == true) {
+                    flag = true;
+                }
+                if (flag) {
+                    var param = $("#ff").serializeObject();
+                    param.uuid = tabledata.uuid;
+                    param.cNum = document.getElementById("cNum").value;
+                    param.cRemark = document.getElementById("cRemark").value;
+                    param.stuUuid = $('#stuUuid').combobox("getValues")[0];
+                    param.cDate = $("#cDate").datebox("getValue");
+                    param.org = document.getElementById("org").value;
+                    param.totalCount = document.getElementById("totalCount").value;
+                    param.totalPrice = document.getElementById("totalPrice").value;
+                    param.sumLineDownB = document.getElementById("sumLineDownB").value;
+                    param.sumLineUpA = document.getElementById("sumLineUpA").value;
+                    param.conPriceList = [];
+                    // RowsDataList = RowDataList || tablePrice.rows().data();
+                    if(RowDataList.length){
+                        RowsDataList = tablePrice.rows().data();
+                    }else{
+                        RowsDataList = RowDataList;
+                    }
+                    console.log(RowDataList.length);
+                    for (var i = 0; i < RowsDataList.length; i++) {
+                        if (RowsDataList[i].priceType == '线上') {
+                            RowsDataList[i].priceType = 'LineUpA';
+                        } else if (RowsDataList[i].priceType == '线下') {
+                            RowsDataList[i].priceType = 'LineDownB';
+                        }
+                        param.conPriceList.push(RowsDataList[i]);
+                    }
+                    console.log(param);
+                    $.ajax({
+
+                        url:"/sdpk/aaContrtext?qqiu=edit",
+                        type: "POST",
+                        data: JSON.stringify(param),
+                        // data: JSON.stringify(send_edit_data),
+                        contentType: "application/json;charset=UTF-8",
+                        success:function(result){
+                            result = JSON.parse(result);
+                            alert(result.message);
+                            $( "#dialog" ).dialog( "close" );
+                            window.location.reload();
+                        }
+
+                    });
+            }
+
+
+
+
+            }//end function submitForm ^^^^^^^^^^^^
+        })
+        function clearForm(){
+            $('#ff').form('clear');
+        };//end function clearForm
+
+
+            //onePriceA
+        //类型一（价格A）输入框3个触发事件
+            $( "#onePriceA" ).change(function() {
+            var p1 = document.getElementById("onePriceA").value;
+            var c1 = document.getElementById("countA").value;
+            var d1 = document.getElementById("delPriceA").value;
+            console.log(new Number(d1));
+            var result = new Number(p1) + new Number(c1) + new Number(d1);
+            document.getElementById("sumPriceA").value = new Number(p1) * new Number(c1) - new Number(d1);
+            });//end 1 外圈 countGiveA
+
+        //countGiveA
+
+            $( "#countGiveA" ).change(function() {
+            var c1 = document.getElementById("countA").value;
+            var cg1 = document.getElementById("countGiveA").value;
+
+            var result = new Number(c1) + new Number(cg1);
+            document.getElementById("sumCountA").value = new Number(c1) + new Number(cg1);
+            });//end 1 外圈 countGiveA
+
+            $( "#delPriceA" ).change(function() {
+                var p1 = document.getElementById("onePriceA").value;
+                var c1 = document.getElementById("countA").value;
+                var d1 = document.getElementById("delPriceA").value;
+                console.log(new Number(d1));
+                var result = new Number(p1) + new Number(c1) + new Number(d1);
+                document.getElementById("sumPriceA").value = new Number(p1) * new Number(c1) - new Number(d1);
+            });//end 1 外圈 delPriceA
+
+            $( "#countA" ).change(function() {
+                var p1 = document.getElementById("onePriceA").value;
+            var c1 = document.getElementById("countA").value;
+            var d1 = document.getElementById("delPriceA").value;
+
+            var result = new Number(p1) + new Number(c1) + new Number(d1);
+            document.getElementById("sumPriceA").value = new Number(p1) * new Number(c1) - new Number(d1);
+
+            var c2 = document.getElementById("countA").value;
+            var cg2 = document.getElementById("countGiveA").value;
+
+            var result2 = new Number(c2) + new Number(cg2);
+            document.getElementById("sumCountA").value = new Number(c2) + new Number(cg2);
+            });//end 1 外圈 countA
+
+        //类型二（价格B）输入框3个触发事件
+
+            function talpri(){
+            tablePrice = $('#examplePrice').DataTable();
+            var scA=0,scB=0,suA=0,sdB=0;
+
+            var send_RowDataList = new Array();
+            //获取表内所有数组的数据
+            RowDataList = tablePrice.rows().data();
+            for(var i=0;i<RowDataList.length;i++){
+                if(RowDataList[i]!=''){
+                    scA+=Number(RowDataList[i].sumPriceA);
+                    scB+=Number(RowDataList[i].sumCountA);
+                }
+                if(RowDataList[i].priceType=='线上'){
+                    suA+=Number(RowDataList[i].sumCountA);
+                }else if(RowDataList[i].priceType=='线下'){
+                    sdB+=Number(RowDataList[i].sumCountA);
+                }
+
+            }
+            document.getElementById("totalPrice").value = scA;
+            var result = new Number(scA) + new Number(scB);
+            document.getElementById("totalCount").value = scB;
+            document.getElementById("sumLineUpA").value = suA;
+            document.getElementById("sumLineDownB").value = sdB;
+            document.getElementById("talPrice").value = scA;
+            document.getElementById("talCount").value = scB;
+            document.getElementById("UpA").value = suA;
+            document.getElementById("DownB").value = sdB;
+            alert("总支付，总次数已更新");
+           } 
+
+
+        //最后总金额，总次数触发
+
+            $( "#talBtn" ).click(function() {
+                talpri();
+            });//end 1 外圈 totalPrice
+
+        //addBtn
+
+            $( "#addBtn" ).click(function() {
+            var f1 = yzV1();
+            var f2 = yzDate();
+            var f3 = yzNumBox();
+            var f4 = yzSkSize();
+            if(f1 == true && f2 == true && f3 == true &&f4==true){
+                var sumPriceA = document.getElementById("sumPriceA").value;
+                var sumCountA = document.getElementById("sumCountA").value;
+                var delPriceA = document.getElementById("delPriceA").value;
+                var countGiveA = document.getElementById("countGiveA").value;
+                var onePriceA = document.getElementById("onePriceA").value;
+                var countA = document.getElementById("countA").value;
+                var priceType = document.getElementById("priceType").value=='LineUpA'?'线上':'线下';
+
+
+                date = {
+                    "onePriceA":onePriceA,
+                    "countA":countA,
+                    "delPriceA":delPriceA,
+                    "countGiveA":countGiveA,
+                    "priceType":priceType,
+                    "sumPriceA":sumPriceA,
+                    "sumCountA":sumCountA
+                }
+                //获取表内所有数组的数据
+                var RowDataList = {};
+                RowDataList = tablePrice.rows().data();
+                RowDataList.push(date);
+                console.log(RowDataList);
+                huiPriceTab(RowDataList);
+
+            }//end if
+
+
+
+            });//end 1 外圈 addBtn
+
+            //步骤1_x1，在步骤1的ajax的回调函数,展示列表数据
+            function huiPriceTab(result){
+                // $('#content03_2_tb').DataTable().fnDestroy();
+                tablePrice = {};
+                // alert("回调中");
+                var a2obj = {};
+                // a2obj = JSON.parse(result);
+                // var a2data = a2obj.data;
+                var a2data = result;
+                tablePrice = $('#examplePrice').DataTable( {
+                    "dom":'frtpi',
+                    bSort:false,
+                    "bLengthChange":false,
+                    searching : false,
+                    scrollX :670,
+                    language: {
+                        "sProcessing": "处理中...",
+                        "sLengthMenu": "显示 _MENU_ 项结果",
+                        "sZeroRecords": "没有匹配结果",
+                        "sInfo": "共 _TOTAL_ 项",
+                        "sInfoEmpty": "共 0 项",
+                        "sInfoFiltered": "(由 _MAX_ 项结果过滤)",
+                        "sInfoPostFix": "",
+                        "sSearch": "搜索:",
+                        "sUrl": "",
+                        "sEmptyTable": "表中数据为空",
+                        "sLoadingRecords": "载入中...",
+                        "sInfoThousands": ",",
+                        "oPaginate": {
+                            "sFirst": "首页",
+                            "sPrevious": "上页",
+                            "sNext": "下页",
+                            "sLast": "末页"
+                        },
+                        "oAria": {
+                            "sSortAscending": ": 以升序排列此列",
+                            "sSortDescending": ": 以降序排列此列"
+                        }
+                    },//国际化语言结束
+
+                    "scrollCollapse": "true",
+                    destroy:true,
+                    data: a2data,
+                    "columns": [
+                        {"data": "onePriceA"},
+                        {"data": "countA"},
+                        {"data": "delPriceA"},
+                        {"data": "countGiveA"},
+                        {"data": "priceType"},
+                        {"data": "sumPriceA"},
+                        {"data": "sumCountA"}
+                    ]
+                } );
+
+            }// end 1_x1 外圈,外部回调函数
+
+        } );//end 最外层 $(document).ready
+    </script>
+    <!-- S--公用弹窗 -->
+    <div class="alert-main">
+        <p class="alert-con">此条学生信息已删除</p>
+        <a class="close-item">×</a>
+    </div>
+    <script>
+        $(function () {
+            $('.close-item').click(function(){
+                $('.alert-main').hide()
+            })
+        })
+    </script>
+    <!-- E--公用弹窗 -->
+</body>
+<!--修改日期输入框样式-->
+<script>
+    $(function(){
+        $('.combo ,.numberbox').css({
+            "height":"34px",
+            "width":"200px"
+        });
+        $('.combo .combo-text').css({
+            "height":"34px",
+            "width":"160px"
+        });
+    })
+</script>
+</html>

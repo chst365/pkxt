@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>员工创建</title>
+	<script type="text/javascript" src="jquery.js"></script>
+	<script type="text/javascript" src="jquery-easyui-136/jquery.easyui.min.js"></script>
+	<script type="text/javascript" src="jquery-easyui-136/locale/easyui-lang-zh_CN.js"></script>
+	
+	<script type="text/javascript" src="xppjs/jquery.serialize-object.js"></script>
+	
+	<link   rel="stylesheet" type="text/css" href="jquery-easyui-136/themes/gray/easyui.css"/>
+	<link   rel="stylesheet" type="text/css" href="jquery-easyui-136/themes/icon.css"/>
+
+
+	<script>
+		 $(document).ready(function(){
+			
+			 $("button").click(function(){
+				 
+				 var parm = {
+						 aa : "1",
+						 bb : "2"
+						 };
+				 
+					$.ajax({
+						
+						url:"/sdpk/aaEmp?qqiu=test",
+						type: "POST",
+						data: JSON.stringify(parm),
+						contentType: "application/json;charset=UTF-8", 
+						success:function(result){
+						$("#div1").html(result);
+						}
+					
+					});
+					
+					
+				});
+	
+		 	
+		 	
+		 });//end document ready
+	</script>
+</head>
+<body>
+	<h2>创建员工</h2>
+
+		<div id="div1"><h2>使用 jQuery AJAX 修改文本内容</h2></div>
+		<button>获取外部内容</button>
+	<div style="margin:20px 0;"></div>
+	<div class="easyui-panel" title="新建" style="width:400px">
+		<div style="padding:10px 60px 20px 60px">
+	    <form id="ff" method="post" action="/sdpk/emp?ask3a1=add" >
+	    	<table cellpadding="5">
+	    		<tr>
+	    			<td>姓名:</td>
+	    			<td><input class="easyui-validatebox textbox" type="text" name="name" data-options="required:true"></input></td>
+	    		</tr>
+	    		<tr>
+	    			<td>员工编号:</td>
+	    			<td><input class="textbox" type="text" name="empNum" ></input></td>
+	    		</tr>
+	    		<tr>
+	    			<td>手机号:</td>
+	    			<td><input class="textbox" type="text" name="phone" ></input></td>
+	    		</tr>
+	    		<tr>
+	    			<td>部门:</td>
+	    			<td><input class="textbox" name="depart"></input></td>
+	    		</tr>
+	    		<tr>
+	    			<td>职位:</td>
+	    			<td><input class="textbox" name="job"></input></td>
+	    		</tr>
+	    		<tr>
+	    			<td>权限模板:</td>
+	    			<td><input class="textbox" name="permissionTempl"></input></td>
+	    		</tr>
+	    		<tr>
+	    			<td>教授的课程:</td>
+	    			<td><input class="textbox" name="course"></input></td>
+	    		</tr>
+	    		<tr>
+	    			<td>备注:</td>
+	    			<td><input class="textbox" name="remark"></input></td>
+	    		</tr>
+	    	</table>
+	    </form>
+	    <div style="text-align:center;padding:5px">
+	    	<a href="javascript:void(0)" class="easyui-linkbutton" onclick="submitForm()">提交</a>
+	    	<a href="javascript:void(0)" class="easyui-linkbutton" onclick="clearForm()">清空</a>
+	    </div>
+	    </div>
+	</div>
+	<style scoped="scoped">
+		.textbox{
+			height:20px;
+			margin:0;
+			padding:0 2px;
+			box-sizing:content-box;
+		}
+	</style>
+	<script>
+		function submitForm(){
+			//$('#ff').form('submit');
+			var param = $("#ff").serializeObject();
+			$.ajax({
+				
+				url:"/sdpk/aaEmp?qqiu=add",
+				type: "POST",
+				//data: JSON.stringify(param),
+				data: JSON.stringify(param),
+				contentType: "application/json;charset=UTF-8", 
+				success:function(result){
+				$("#div1").html(result);
+				}
+			 
+			});
+			
+		}//end function submitForm
+		function clearForm(){
+			$('#ff').form('clear');
+		}
+	</script>
+</body>
+</html>

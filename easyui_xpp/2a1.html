@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>学员创建</title>
+	
+	<!-- <script type="text/javascript" src="../xppjs/jquery.js"></script> -->
+	<script type="text/javascript" src="jquery-easyui-136/jquery.min.js"></script>
+	<script type="text/javascript" src="jquery-easyui-136/jquery.easyui.min.js"></script>
+	<script type="text/javascript" src="jquery-easyui-136/locale/easyui-lang-zh_CN.js"></script>
+	<script type="text/javascript" src="../xppjs/jquery.serialize-object.js"></script>
+	
+	<link   rel="stylesheet" type="text/css" href="jquery-easyui-136/themes/gray/easyui.css"/>
+	<link   rel="stylesheet" type="text/css" href="jquery-easyui-136/themes/icon.css"/>
+	<link rel="stylesheet" type="text/css" href="../HMcode/HMcss/2a1.css">
+	<style>
+		.dataTables_wrapper{
+			margin-top:-67px;
+		}
+	</style>
+	<script>
+
+		//验证所有类名yzss输入框
+			function yzV1(){
+			var m = {};
+			// m=document.getElementsByTagName("input");
+			m=document.getElementsByClassName("yz-box");
+
+			for(var i=0;i<m.length;i++)
+			{
+					if(m[i].value==""||m[i].value==null)
+					{
+						alert("请填写所有输入框的值"+m[i].id);
+						return false;
+					}
+			}//end for
+			console.log("合同前两行输入框验证，有值！！");
+			return true;
+		}
+		
+
+		function submitForm(){
+			var f1=yzV1();
+			var flag = false;
+			if(f1==true){flag = true;}
+			if (flag) {
+			//$('#ff').form('submit');
+			var param = $("#ff").serializeObject();
+			console.log(param);
+			$.ajax({
+				
+				url:"/sdpk/aaStudent?qqiu=add",
+				type: "POST",
+				//data: JSON.stringify(param),
+				data: JSON.stringify(param),
+				contentType: "application/json;charset=UTF-8", 
+				success:function(result){
+				var obj = JSON.parse(result);
+				alert(obj.message);
+				//调用父级弹窗start
+            	var $parent = self.parent.$;
+            	$parent('#menu_b2').click();
+        		//调用父级弹窗end
+				
+				}
+			 
+			});//end 结束ajax
+		}//end if(flag)
+		};//end function submitForm
+
+		function clearForm(){
+			$('#ff').form('clear');
+		};//end function clearForm
+
+
+	</script>
+</head>
+<body>
+	
+	<div id="fen_container" class="tab-con">
+
+		<div id="ye_1_blank"></div>
+		<div id="ye_2_blank"></div>
+
+		<div id="ye_3_text_container">
+			<div id="header_1">
+            	<h2>新增学员</h2>
+			</div>
+            <div id="header_2" class="tit_style">
+            	<h3>基础信息</h3>
+			</div>
+
+            <div id="header_3_form">
+            	<form id="ff" method="post" > 
+            		<table class="tab-style">
+            		<!-- 第一行 -->
+            		<tr>
+	    			<td class="name-s" style="padding-left:0">姓名</td>
+	    			<td><input  type="text" name="name" class="yz-box yzss" placeholder="请输入姓名"></input></td>
+	    			<td class="name-s">性别</td>
+	    			<td>
+		    			<select  name="sex" class="yz-box yzss sel_s">
+							<option value="男">男</option>
+							<option value="女">女</option>
+						</select>
+	    			</td>
+	    			<td class="name-s">手机</td>
+	    			<td><input  type="text" name="phone" class="yz-box yzss" placeholder="请输入电话号码"></input></td>
+	    			</tr>
+	    			<!-- 第一行结束 -->
+	    			<!-- 第二行 -->
+            		<tr>
+	    			<td class="name-s" style="padding-left:0">校区</td>
+	    			<td>
+		    			<select  name="org" class="yz-box yzss sel_s">
+							<option value="所有校区">所有校区</option>
+							<option value="企业公馆校区">企业公馆校区</option>
+						</select>
+	    			</td>
+	    			<td class="name-s">学号</td>
+	    			<td><input  type="text" name="studentID" class="yz-box yzss" placeholder="请输入学号"></input></td>
+	    		
+	    			</tr>
+	    			<!-- 第二行结束 -->
+            		</table>
+
+            		<div class="tit_style">
+						<h3>其他信息</h3>
+					</div>
+
+            		<table class="tab-style">
+            		<!-- 第一行 -->
+            		<tr>
+	    			<td class="name-s" style="padding-left:0">学校</td>
+	    			<td style="margin-left:20px;"><input  type="text" name="school" class="yz-box yzss" placeholder="请输入学校" value="无"></input></td>
+	    			<td class="name-s">年级</td>
+	    			<td><input  type="text" name="grade" class="yz-box yzss" placeholder="请输入年级" value="无"></input></td>
+	    			</tr>
+	    			<!-- 第一行结束 -->
+	    		</table>
+
+	    		<table class="tab-style">
+            		<tr>
+	    			<td class="name-s" style="padding-left:0">备注</td>
+	    			<td><input  type="text" name="remark" class="yzss" style="width:949px;" value="无"></input></td>
+	    			</tr>
+	    			<!-- 第二行结束 -->
+
+            		</table>
+
+            		<div class="tit_style">
+						<h3>家长信息</h3>
+					</div>
+
+            		<table class="tab-style">
+            		<!-- 第一行 -->
+            		<tr>
+	    			<td class="name-s" style="padding-left:0">关系</td>
+	    			<td><input  type="text" name="parentRela" class="yzss" value="无"></input></td>
+	    			<td class="name-s">姓名</td>
+	    			<td><input  type="text" name="parentName" class="yzss" value="无"></input></td>
+	    			<td class="name-s">电话</td>
+	    			<td><input  type="text" name="parentPhone" class="yzss" value="无"></input></td>
+	    			</tr>
+	    			<!-- 第一行结束 -->
+            		</table>
+					<table class="tab-style">
+						<!-- 第一行 -->
+						<tr>
+							<td class="name-s" style="padding-left:0;padding-right: 12px;">关系2</td>
+							<td><input  type="text" name="parentRela2" class=" yzss" value="无"></input></td>
+							<td class="name-s" style="padding-right: 12px;">姓名2</td>
+							<td><input  type="text" name="parentName2" class="yzss" value="无"></input></td>
+							<td class="name-s" style="padding-right: 12px;">电话2</td>
+							<td><input  type="text" name="parentPhone2" class=" yzss" value="无"></input></td>
+						</tr>
+						<!-- 第一行结束 -->
+					</table>
+            	</form>
+            	<!-- 按钮div开始 -->
+            	<div class="btn-box" style="margin-right: 14px;">
+	    			<a href="javascript:void(0)" class="easyui-linkbutton btn-xk" onclick="clearForm()">清空</a>
+	    			<a href="javascript:void(0)" class="easyui-linkbutton btn-qr" onclick="submitForm()">确认</a>
+	   			 </div>
+	   			 <!-- 按钮div结束 -->
+            </div><!-- end div  header_3_form-->
+
+		</div><!-- end div  ye_3_text_container-->
+
+
+	</div><!-- end div  id="fen_container"-->
+	<!-- S--公用弹窗 -->
+	<div class="alert-main">
+		<p class="alert-con">此条学生信息已删除</p>
+		<a class="close-item">×</a>
+	</div>
+	<script>
+        $(function () {
+            $('.close-item').click(function(){
+                $('.alert-main').hide()
+            })
+        })
+	</script>
+	<!-- E--公用弹窗 -->
+</body>
+</html>

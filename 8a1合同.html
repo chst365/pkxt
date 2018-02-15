@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>合同创建</title>
+	<script type="text/javascript" src="jquery.js"></script>
+	<script type="text/javascript" src="jquery-easyui-136/jquery.easyui.min.js"></script>
+	<script type="text/javascript" src="jquery-easyui-136/locale/easyui-lang-zh_CN.js"></script>
+	
+	<script type="text/javascript" src="xppjs/jquery.serialize-object.js"></script>
+	
+	<link   rel="stylesheet" type="text/css" href="jquery-easyui-136/themes/gray/easyui.css"/>
+	<link   rel="stylesheet" type="text/css" href="jquery-easyui-136/themes/icon.css"/>
+
+
+	<script>
+		 $(document).ready(function(){
+			
+			 $("button").click(function(){
+				 
+				 var parm = {
+						 aa : "1",
+						 bb : "2"
+						 };
+				 
+					$.ajax({
+						
+						url:"/sdpk/aaContract?qqiu=test",
+						type: "POST",
+						data: JSON.stringify(parm),
+						contentType: "application/json;charset=UTF-8", 
+						success:function(result){
+						$("#div1").html(result);
+						}
+					
+					});
+					
+					
+				});
+	
+		 	
+		 	
+		 });//end document ready
+	</script>
+</head>
+<body>
+	<h2>创建合同</h2>
+
+		<div id="div1"><h2>使用 jQuery AJAX 修改文本内容</h2></div>
+		<button>获取外部内容</button>
+	<div style="margin:20px 0;"></div>
+	<div class="easyui-panel" title="新建" style="width:400px">
+		<div style="padding:10px 60px 20px 60px">
+	    <form id="ff" method="post" action="/sdpk/emp?ask3a1=add" >
+	    	<table cellpadding="5">
+	    		<tr>
+	    			<td>流水单号:</td>
+	    			<td><input class="easyui-validatebox textbox" type="text" name="oddNum" data-options="required:true"></input></td>
+	    		</tr>
+	    		<tr>
+	    			<td>学员uuid:</td>
+	    			<td><input class="textbox" type="text" name="stuUuid" ></input></td>
+	    		</tr>
+	    		<tr>
+	    			<td>所在校区:</td>
+	    			<td><input class="textbox" type="text" name="campus" ></input></td>
+	    		</tr>
+	    		<tr>
+	    			<td>交易账户:</td>
+	    			<td><input class="textbox" type="text" name="account" ></input></td>
+	    		</tr>
+	    		<tr>
+	    			<td>经办人:</td>
+	    			<td><input class="textbox" type="text" name="operator" ></input></td>
+	    		</tr>
+	    		<tr>
+	    			<td>收退费:</td>
+	    			<td><input class="textbox" type="text" name="fee" ></input></td>
+	    		</tr>
+	    		<tr>
+	    			<td>费用类型:</td>
+	    			<td><input class="textbox" type="text" name="feeType" ></input></td>
+	    		</tr>
+	    		<tr>
+	    			<td>收费方式:</td>
+	    			<td><input class="textbox" type="text" name="feeMode" ></input></td>
+	    		</tr>
+	    		<tr>
+	    			<td>项目名称:</td>
+	    			<td><input class="textbox" type="text" name="itemName" ></input></td>
+	    		</tr>
+	    		<tr>
+	    			<td>金额:</td>
+	    			<td><input class="textbox" type="text" name="amount" ></input></td>
+	    		</tr>
+	    		
+	    	</table>
+	    </form>
+	    <div style="text-align:center;padding:5px">
+	    	<a href="javascript:void(0)" class="easyui-linkbutton" onclick="submitForm()">提交</a>
+	    	<a href="javascript:void(0)" class="easyui-linkbutton" onclick="clearForm()">清空</a>
+	    </div>
+	    </div>
+	</div>
+	<style scoped="scoped">
+		.textbox{
+			height:20px;
+			margin:0;
+			padding:0 2px;
+			box-sizing:content-box;
+		}
+	</style>
+	<script>
+		function submitForm(){
+			//$('#ff').form('submit');
+			var param = $("#ff").serializeObject();
+			$.ajax({
+				
+				url:"/sdpk/aaContract?qqiu=add",
+				type: "POST",
+				//data: JSON.stringify(param),
+				data: JSON.stringify(param),
+				contentType: "application/json;charset=UTF-8", 
+				success:function(result){
+				$("#div1").html(result);
+				}
+			 
+			});
+			
+		}//end function submitForm
+		function clearForm(){
+			$('#ff').form('clear');
+		}
+	</script>
+</body>
+</html>

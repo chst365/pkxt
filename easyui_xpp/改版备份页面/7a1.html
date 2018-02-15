@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>添加合同</title>
+	
+	<!-- <script type="text/javascript" src="../xppjs/jquery.js"></script> -->
+	<script type="text/javascript" src="jquery-easyui-136/jquery.min.js"></script>
+	<script type="text/javascript" src="jquery-easyui-136/jquery.easyui.min.js"></script>
+	<script type="text/javascript" src="jquery-easyui-136/locale/easyui-lang-zh_CN.js"></script>
+	<script type="text/javascript" src="../xppjs/jquery.serialize-object.js"></script>
+	
+	<link   rel="stylesheet" type="text/css" href="jquery-easyui-136/themes/gray/easyui.css"/>
+	<link   rel="stylesheet" type="text/css" href="jquery-easyui-136/themes/icon.css"/>
+	<link   rel="stylesheet" type="text/css" href="../HMcode/HMcss/7a1.css">
+
+	<script>
+		
+
+		// function submitForm(){
+		// 	//$('#ff').form('submit');
+		// 	var param = $("#ff").serializeObject();
+		// 	param.sumPriceA = document.getElementById("sumPriceA").value;
+		// 	param.sumCountA = document.getElementById("sumCountA").value;
+		// 	param.sumPriceB = document.getElementById("sumPriceB").value;
+		// 	param.sumCountB = document.getElementById("sumCountB").value;
+		// 	param.totalPrice = document.getElementById("totalPrice").value;
+		// 	param.totalCount = document.getElementById("totalCount").value;
+		// 	$.ajax({
+				
+		// 		url:"/sdpk/aaContract?qqiu=add",
+		// 		type: "POST",
+		// 		//data: JSON.stringify(param),
+		// 		data: JSON.stringify(param),
+		// 		contentType: "application/json;charset=UTF-8", 
+		// 		success:function(result){
+		// 		alert("新增成功");
+		// 		}
+			 
+		// 	});
+			
+		// }//end function submitForm
+		// 
+
+        //获取课程下拉框数据L4和R3
+        var send_R4 = {};
+        send_R4.id = "uuid";
+        send_R4.claUuid = "name";
+        $.ajax({
+
+            url:"/sdpk/aaStudent?qqiu=list",
+            type: "POST",
+            //data: JSON.stringify(param),
+            data: JSON.stringify(send_R4),
+            contentType: "application/json;charset=UTF-8",
+            success:function(result){
+                //步骤1_a1，在步骤1的ajax的回调函数
+                huiFuncR4(result);
+                // alert("下拉框加载完成");
+            }
+
+        });
+        //步骤1_xR3，在步骤1的ajax的回调函数,展示列表数据
+        function huiFuncR4(result){
+            // alert("回调中");
+            var objR4 = {};
+            objR4 = JSON.parse(result);
+            var a2dataR4 = objR4.data;
+            for(var i=0;i<a2dataR4.length;i++){
+                $('#stuUuid').append('<option value="'+a2dataR4[i].name+'">'+a2dataR4[i].name+'</option>')
+            }
+            // $('#stuUuid').combobox({
+            //     data: a2dataR4,
+            //     valueField: 'name',
+            //     textField: 'name',
+            //     selectOnNavigation: false
+            // });
+
+        }// end 1_x1 外圈
+        //end 1 加载所有下拉框 结束
+		//验证第一二行中的3个输入框
+		function yzV1(){
+				var m = {};
+				// m=document.getElementsByTagName("input");
+				m=document.getElementsByClassName("v1g3");
+
+				for(var i=0;i<m.length;i++)
+				{
+						if(m[i].value==""||m[i].value==null)
+						{
+							alert("请填写输入框的值(前两行)"+m[i].id);
+							return false;
+						}
+				}//end for
+				console.log("合同前两行输入框验证，有值！！");
+				return true;
+			}
+		//验证日期输入框
+		function yzDate(){
+				var m = {};
+				// m=document.getElementsByTagName("input");
+				m=document.getElementById("cDate");
+				var c1 = $("#cDate").datebox("getValue");
+
+				
+						if(c1==""||c1==null)
+						{
+							alert("请填写日期框"+c1+"的值");
+							return false;
+						}
+				console.log("日期验证，有值！"+c1);
+				return true;
+			}
+			//验证6个数字框
+			function yzNumBox(){
+				var m = {};
+				// m=document.getElementsByTagName("input");
+				m=document.getElementsByClassName("easyui-numberbox");
+
+				for(var i=0;i<m.length;i++)
+				{
+
+						if(m[i].value==""||m[i].value==null)
+						{
+							alert("请填写数字输入框的值(类型中)"+m[i].id);
+							return false;
+						}
+				}//end for
+				console.log("6个数字输入框验证，有值！");
+				 return true;
+			}
+
+
+		function submitForm(){
+			//$('#ff').form('submit');
+			var f1=yzV1();
+			var f2=yzDate();
+			var f3=yzNumBox();
+			var flag = false;
+            //计算总价格，总课数
+            var sumA = document.getElementById("sumPriceA").value;
+            var sumB = document.getElementById("sumPriceB").value;
+
+            var result = new Number(sumA) + new Number(sumB);
+            // alert(result);
+            document.getElementById("totalPrice").value = new Number(sumA) + new Number(sumB);
+
+            var scA = document.getElementById("sumCountA").value;
+            var scB = document.getElementById("sumCountB").value;
+            var result = new Number(scA) + new Number(scB);
+            // alert(result);
+            document.getElementById("totalCount").value = new Number(scA) + new Number(scB);
+            alert("总支付，总次数已更新");
+            //总价格，总课数计算结束
+			if(f1==true&&f2==true&&f3==true){flag = true;}
+			if (flag) {
+			var param = $("#ff").serializeObject();
+			param.sumPriceA = document.getElementById("sumPriceA").value;
+			param.sumCountA = document.getElementById("sumCountA").value;
+			param.sumPriceB = document.getElementById("sumPriceB").value;
+			param.sumCountB = document.getElementById("sumCountB").value;
+			param.totalPrice = document.getElementById("totalPrice").value;
+			param.totalCount = document.getElementById("totalCount").value;
+			$.ajax({
+				
+				url:"/sdpk/aaContract?qqiu=add",
+				type: "POST",
+				//data: JSON.stringify(param),
+				data: JSON.stringify(param),
+				contentType: "application/json;charset=UTF-8", 
+				success:function(result){
+				alert("新增成功");
+				//调用父级弹窗start
+            	var $parent = self.parent.$;
+            	$parent('#menu_g2').click();
+        		//调用父级弹窗end
+				}
+			 
+			});
+
+			}else{
+				alert("补填后，再点击!");
+			}
+			
+			
+			
+		}//end function submitForm
+
+		function clearForm(){
+			$('#ff').form('clear');
+		};//end function clearForm
+
+
+		//类型一（价格A）输入框3个触发事件
+		function cn_onePriceA() {
+			var p1 = document.getElementById("onePriceA").value;
+			var c1 = document.getElementById("countA").value;
+			var d1 = document.getElementById("delPriceA").value;
+
+			var result = new Number(p1) + new Number(c1) + new Number(d1);
+			document.getElementById("sumPriceA").value = new Number(p1) * new Number(c1) - new Number(d1);
+		}
+
+		function cn_countGiveA() {
+			var c1 = document.getElementById("countA").value;
+			var cg1 = document.getElementById("countGiveA").value;
+
+			var result = new Number(c1) + new Number(cg1);
+			document.getElementById("sumCountA").value = new Number(c1) + new Number(cg1);
+		}
+
+		function countA_cn() {
+			var p1 = document.getElementById("onePriceA").value;
+			var c1 = document.getElementById("countA").value;
+			var d1 = document.getElementById("delPriceA").value;
+
+			var result = new Number(p1) + new Number(c1) + new Number(d1);
+			document.getElementById("sumPriceA").value = new Number(p1) * new Number(c1) - new Number(d1);
+
+			var c2 = document.getElementById("countA").value;
+			var cg2 = document.getElementById("countGiveA").value;
+
+			var result2 = new Number(c2) + new Number(cg2);
+			document.getElementById("sumCountA").value = new Number(c2) + new Number(cg2);
+		}
+
+		//类型二（价格B）输入框3个触发事件
+
+		function cn_onePriceB() {
+			var p1 = document.getElementById("onePriceB").value;
+			var c1 = document.getElementById("countB").value;
+			var d1 = document.getElementById("delPriceB").value;
+
+			var result = new Number(p1) + new Number(c1) + new Number(d1);
+			document.getElementById("sumPriceB").value = new Number(p1) * new Number(c1) - new Number(d1);
+		}
+
+		function cn_countGiveB() {
+			var c1 = document.getElementById("countB").value;
+			var cg1 = document.getElementById("countGiveB").value;
+
+			var result = new Number(c1) + new Number(cg1);
+			document.getElementById("sumCountB").value = new Number(c1) + new Number(cg1);
+		}
+
+		function countB_cn() {
+			var p1 = document.getElementById("onePriceB").value;
+			var c1 = document.getElementById("countB").value;
+			var d1 = document.getElementById("delPriceB").value;
+
+			var result = new Number(p1) + new Number(c1) + new Number(d1);
+			document.getElementById("sumPriceB").value = new Number(p1) * new Number(c1) - new Number(d1);
+
+			var c2 = document.getElementById("countB").value;
+			var cg2 = document.getElementById("countGiveB").value;
+
+			var result2 = new Number(c2) + new Number(cg2);
+			document.getElementById("sumCountB").value = new Number(c2) + new Number(cg2);
+		}
+
+		//最后总金额，总次数触发
+
+		function cn_totalPrice() {
+			var sumA = document.getElementById("sumPriceA").value;
+			var sumB = document.getElementById("sumPriceB").value;
+
+			var result = new Number(sumA) + new Number(sumB);
+			// alert(result);
+			document.getElementById("totalPrice").value = new Number(sumA) + new Number(sumB);
+
+			var scA = document.getElementById("sumCountA").value;
+			var scB = document.getElementById("sumCountB").value;
+			var result = new Number(scA) + new Number(scB);
+			// alert(result);
+			document.getElementById("totalCount").value = new Number(scA) + new Number(scB);
+			alert("总支付，总次数已更新");
+		}
+
+
+
+
+	</script>
+</head>
+<body>
+	
+	<div id="fen_container"  class="tab-con">
+
+		<div id="ye_1_blank"></div>
+		<div id="ye_2_blank"></div>
+
+		<div id="ye_3_text_container">
+			<div id="header_1">
+				<h2>新增合同</h2>
+			</div>
+            <div id="header_2">
+            </div>
+
+            <div id="header_3_form">
+            	<form id="ff" method="post" > 
+            		<table id="header_3_tb1" class="tab-style">
+            		<!-- 第一行 -->
+            		<tr>
+	    			<td class="name-s" style="padding-left:0">合同编号</td>
+	    			<td><input  type="text" id="cNum" name="cNum" class="easyui-textbox v1g3 yzss"  required style="height: 39px;width: 923px;font-size:16px;" placeholder="输入合同编号"></td>
+	    			</tr>
+	    			<!-- 第一行结束 -->
+
+            		</table> <!-- end id为 header_3_tb1 -->
+
+	    		<table id="header_3_tb2"  class="tab-style">
+            		<!-- 第一行 -->
+            		<tr>
+	    			<td class="name-s" style="padding-left:0">学生名称</td>
+	    			<td>
+
+						<select name="stuUuid" id="stuUuid" class=" yzss sel_s"  placeholder="输入合同编号">
+							<option >请选择学生</option>
+						</select>
+						<!--<input id="stuUuid" name="stuUuid" data-options="editable:true" class="easyui-combobox " style="width: 200px; height: 36px; display: none;" comboname="stuUuid">-->
+					</td>
+	    			<td class="name-s">交易时间</td>
+	    			<td><input id="cDate" name="cDate" type="text" class="easyui-datebox yzss" style="line-height: 34px; height:36px;background-color: white;" required="required"></td>
+	    			<!--<td class="name-s">校区组织</td>-->
+	    			<!--<td><input  type="text" id="org" name="org" class="v1g3 yzss" placeholder="请输入校区组织"> </td>-->
+						<td class="name-s">所在校区</td>
+						<td>
+							<select  name="org" class="yzss sel_s">
+								<option >请选择校区</option>
+								<option value="共和校区">共和校区</option>
+								<option value="天目分校">天目分校</option>
+								<option value="所有校区">所有校区</option>
+							</select>
+						</td>
+	    			</tr>
+            		</table><!-- end  id= header_3_tb2 -->
+
+            		<!-- 划线说明 -->
+            		<div class="tit_style">
+						<h3>金额(1200类型)</h3>
+            		</div><!-- 划线说明结束 -->
+
+
+            		<table id="header_3_tb3" class="tab-style">
+            		<!-- 类型一(价格A)第一行 -->
+            		<tr>
+						<td  class="name-s" style="padding-left:0">单&nbsp;&nbsp;&nbsp;&nbsp;价</td>
+	    			<td>
+                        <select id="onePriceA"  name="onePriceA" class="yzss sel_s" onchange="cn_onePriceA();" required="required">
+                            <option value="0">0</option>
+                            <option value="1200">1200</option>
+                        </select>
+            		</td>
+	    			<td class="name-s">数&nbsp;&nbsp;&nbsp;&nbsp;量</td>
+	    			<td ><input id="countA" name="countA" class="easyui-numberbox yzss"style="height:36px; line-height: 34px;"  data-options="min:0,max:999999,value: 0,editable:true" onchange="countA_cn();"></td>
+            		</tr><!-- 第一行结束 -->
+            		<!--类型一(价格A) 第二行 -->
+            		<tr>
+						<td class="name-s" style="padding-left:0;">优惠金额</td>
+	    			<td ><input id="delPriceA" name="delPriceA" class="easyui-numberbox yzss" style="height:36px; line-height: 34px;"data-options="min:0,max:999999,value: 0,editable:true" onchange="cn_onePriceA();"></td>
+
+	    			<td class="name-s">送课次数</td>
+	    			<td ><input id="countGiveA" name="countGiveA" class="easyui-numberbox yzss" style="height:36px; line-height: 34px;" data-options="min:0,max:999999,value: 0,editable:true" onchange="cn_countGiveA();"></td>
+            		</tr><!-- 第二行结束 类型一(价格A)-->
+					<!--类型一(价格A) 第三行 -->
+            		<tr>
+						<td  class="name-s txt_red" style="padding-left:0">支付金额</td>
+	    			<td ><input id="sumPriceA" name="sumPriceA"  class="easyui-textbox yzss border_red" disabled="true" value="0"></td>
+
+	    			<td class="name-s txt_red">上课次数</td>
+	    			<td ><input id="sumCountA" name="sumCountA" class="easyui-textbox yzss border_red"  disabled="true" value="0"></td>
+            		</tr><!-- 第三行结束 -->
+            		</table><!-- end id  header_3_tb3-->
+
+            		<!-- 划线 -->
+            		<div id="header_2">
+            		</div><!-- 划线结束 -->
+
+            <!-- 划线说明 -->
+            		<div class="tit_style">
+						<h3>金额(1500类型)</h3>
+            		</div><!-- 划线说明结束 -->
+
+            <table id="header_3_tb4" class="tab-style">
+            		<!-- 类型二(价格B)第一行 -->
+            		<tr>
+						<td class="name-s" style="padding-left:0">单&nbsp;&nbsp;&nbsp;&nbsp;价</td>
+	    			<td>
+                        <select id="onePriceB"  name="onePriceB" onchange="cn_onePriceB();" class="yzss sel_s">
+                            <option value="0">0</option>
+                            <option value="1500">1500</option>
+                        </select>
+            		</td>
+	    			<td class="name-s">数&nbsp;&nbsp;&nbsp;&nbsp;量</td>
+	    			<td ><input id="countB" name="countB" onchange="countB_cn();" class="easyui-numberbox yzss" style="height:36px; line-height: 34px;"  data-options="min:0,max:999999,value: 0,editable:true"></td>
+            		</tr><!-- 第一行结束 -->
+            		<!-- 类型二(价格B)第二行 -->
+            		<tr>
+						<td class="name-s" style="padding-left:0">优惠金额</td>
+	    			<td ><input id="delPriceB" name="delPriceB" onchange="cn_onePriceB();" class="easyui-numberbox yzss" style="height:36px; line-height: 34px;" data-options="min:0,max:999999,value: 0,editable:true"></td>
+						<td class="name-s">送课次数</td>
+	    			<td ><input id="countGiveB" name="countGiveB" onchange="cn_countGiveB();" class="easyui-numberbox yzss" style="height:36px; line-height: 34px;" data-options="min:0,max:999999,value: 0,editable:true"></td>
+            		</tr><!-- 第二行结束 类型二(价格B)-->
+					<!-- 类型二(价格B)第三行 -->
+            		<tr>
+						<td class="name-s txt_red" style="padding-left: 0;">支付金额</td>
+	    			<td ><input id="sumPriceB" name="sumPriceB" class="easyui-textbox yzss border_red"  required="required"  disabled="true" value="0"></td>
+	    			<td class="name-s txt_red">上课次数</td>
+	    			<td ><input id="sumCountB" name="sumCountB" class="easyui-textbox yzss border_red" required="required"  disabled="true" value="0"></td>
+            		</tr><!-- 第三行结束 -->
+            		</table><!-- end id  header_3_tb4-->
+            		<!-- 划线说明 -->
+            		<div class="tit_style">
+						<h3>金额(1200类型+1500类型)</h3>
+            		</div><!-- 划线说明结束 -->
+            		<table id="header_3_tb4" class="tab-style">
+					<!-- 类型二(价格B)第三行 -->
+            		<tr>
+						<td class="name-s txt_red" style="padding-left:0">总&nbsp;支&nbsp;付</td>
+	    			<td ><input id="totalPrice" name="totalPrice" required="required"  disabled="true" value="0" class="yzss border_red"></td>
+	    			<td class="name-s txt_red">总&nbsp;次&nbsp;数</td>
+	    			<td ><input id="totalCount" name="totalCount" class="yzss border_red" required="required"  disabled="true" value="0"></td>
+	    			<td class="name-s"></td>
+	    			<td><a href="javascript:void(0)" class="easyui-linkbutton ca_btn" onclick="cn_totalPrice()"style="display:none">计算按钮</a></td>
+            		</tr><!-- 第三行结束 -->
+            		</table><!-- end id  header_3_tb4-->
+
+            	</form>
+            	<!-- 按钮div开始 -->
+            	
+
+            	  <div class="btn-box">
+	    			<a href="javascript:void(0)" class="easyui-linkbutton btn-xk" onclick="clearForm()">清空</a>
+	    			<a href="javascript:void(0)" class="easyui-linkbutton btn-qr" onclick="submitForm()">确认</a>
+	   			 </div>
+
+	   			 <!-- 按钮div结束 -->
+            </div><!-- end div  header_3_form-->
+
+		</div><!-- end div  ye_3_text_container-->
+	</div><!-- end div  id="fen_container"-->
+	<!-- S--公用弹窗 -->
+	<div class="alert-main">
+		<p class="alert-con">此条学生信息已删除</p>
+		<a class="close-item">×</a>
+	</div>
+	<script>
+        $(function () {
+            $('.close-item').click(function(){
+                $('.alert-main').hide()
+            })
+        })
+	</script>
+	<!-- E--公用弹窗 -->
+</body>
+<!--修改日期输入框样式-->
+<script>
+    $(function(){
+        $('.combo ,.numberbox').css({
+            "height":"34px",
+            "width":"200px"
+        });
+        $('.combo .combo-text').css({
+            "height":"34px",
+            "width":"160px"
+        });
+    })
+</script>
+</html>

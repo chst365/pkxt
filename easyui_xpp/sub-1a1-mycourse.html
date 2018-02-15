@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>标题：我的今日课程</title>
+	<script type="text/javascript" src="jquery-easyui-136/jquery.min.js"></script>
+	<script type="text/javascript" src="jquery-easyui-136/jquery.easyui.min.js"></script>
+	<script type="text/javascript" src="jquery-easyui-136/locale/easyui-lang-zh_CN.js"></script>
+	<script type="text/javascript" src="js-sub-xpp/2a2-stuCrud.js"></script>
+	<link   rel="stylesheet" type="text/css" href="jquery-easyui-136/themes/gray/easyui.css"/>
+	<link   rel="stylesheet" type="text/css" href="jquery-easyui-136/themes/icon.css"/>
+</head>
+<body>
+	<table class="easyui-datagrid" title="" style="width:874px;height:590px;box-sizing:border-box;"
+			data-options="singleSelect:true,collapsible:true,url:'json-sub-xpp/datagrid_data1.json',method:'get'">
+		<thead>
+			<tr>
+				<th data-options="field:'time',width:130,align:'center'">时间</th>
+				<th data-options="field:'student',width:130,align:'center'">学生</th>
+				<th data-options="field:'course',width:130,align:'center'">学科</th>
+				<th data-options="field:'classroom',width:130,align:'center'">教室</th>
+				<th data-options="field:'employee',width:130,align:'center'">任课老师</th>
+				<th data-options="field:'status',width:215,align:'center'">操作</th>
+			</tr>
+		</thead>
+	</table>
+</body>
+</html>

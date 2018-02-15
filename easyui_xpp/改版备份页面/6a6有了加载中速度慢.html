@@ -1,0 +1,783 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>全校课表查询</title>
+	<script type="text/javascript" src="jquery-easyui-136/jquery.min.js"></script>  
+
+	<script type="text/javascript" src="jquery-easyui-136/jquery.easyui.min.js"></script>
+	<script type="text/javascript" src="jquery-easyui-136/locale/easyui-lang-zh_CN.js"></script>
+	<script type="text/javascript" src="DataTables/datatables.js"></script>
+    <script type="text/javascript" src="../xppjs/jquery.serialize-object.js"></script>
+    <script type="text/javascript" src="../xppjs/jquery.cookie.js"></script>
+	
+	<link   rel="stylesheet" type="text/css" href="jquery-easyui-136/themes/gray/easyui.css"/>
+	<link   rel="stylesheet" type="text/css" href="jquery-easyui-136/themes/icon.css"/>
+	<link   rel="stylesheet" type="text/css" href="DataTables/datatables.css"/>
+    <link rel="stylesheet" type="text/css" href="../HMcode/HMcss/6a6.css">
+
+    <style>
+        .dataTables_wrapper .dataTables_info{
+            clear: none;
+            float: right;
+            padding-right: 20px;
+            margin-top:0;
+        }
+        .dataTables_wrapper .dataTables_paginate{
+            float: right;
+        }
+        .tab-tab {
+            padding:10px;
+            box-sizing: border-box;
+        }
+        .change_add h2{
+            font-size:20px;
+            color: #828282;
+            line-height: 90px;
+        }
+
+        .class-xq{
+            height: 60px;
+        }
+        .calen-b>p {
+            line-height:60px;
+        }
+        .dataTables_wrapper .dataTables_paginate .paginate_button{
+            border:1px solid transparent;
+        }
+        .dataTables_wrapper .dataTables_paginate .paginate_button:hover{
+            border:1px solid transparent;
+        }
+        .dataTables_wrapper .dataTables_paginate .paginate_button:active{
+            box-shadow: none;
+        }
+        .dataTables_wrapper .dataTables_paginate .paginate_button.current, .dataTables_wrapper .dataTables_paginate .paginate_button.current:hover{
+            border:1px solid transparent;
+        }
+        .dataTables_wrapper .dataTables_paginate .paginate_button{
+            border:1px solid transparent;
+        }
+        .dataTables_wrapper .dataTables_paginate .paginate_button:hover{
+            border:1px solid transparent;
+        }
+        .dataTables_wrapper .dataTables_paginate .paginate_button:active{
+            box-shadow: none;
+        }
+        .dataTables_wrapper .dataTables_paginate .paginate_button.current, .dataTables_wrapper .dataTables_paginate .paginate_button.current:hover{
+            border:1px solid transparent;
+        }
+        table.dataTable.display tbody tr.even td.sorting_1{
+            background-color: white;
+        }
+    </style>
+    <!-- 11月09新增start -->
+
+    <script type="text/javascript">
+    var table_ye2;//全局变量
+    $(document).ready(function() {
+        /*第零步：把datatables插件的警告窗变成控制台打印*/
+        $.fn.dataTable.ext.errMode = 'none';
+
+        function ajaxLoading(){
+            $("<div class=\"datagrid-mask\"></div>").css({display:"block",width:"100%",height:$(window).height()}).appendTo("body");
+            $("<div class=\"datagrid-mask-msg\"></div>").html("努力加载中").appendTo("body").css({display:"block",left:($(document.body).outerWidth(true) - 190) / 2,top:($(window).height() - 45) / 2});
+        }
+        function ajaxLoadEnd(){
+            $(".datagrid-mask").remove();
+            $(".datagrid-mask-msg").remove();
+        }
+
+
+
+        //-----------第二部分列表展示和功能------------
+    //步骤1,展示列表数据，默认本月
+        var data =new Date();
+        var curYear = data.getFullYear();
+        var curMonth = data.getMonth()+1;
+        var curDay = data.getDate();
+        if(curMonth<10){
+            curMonth = "0"+curMonth;
+        }
+        if(curMonth<10){
+            curDay = "0"+curDay;
+        }
+        var curTime =curYear+"-"+curMonth+"-"+curDay;
+
+        var courseAll = {};
+        courseAll.keDateTime =curTime;
+        $.ajax({
+            url:"/sdpk/aaQueKeAll?qqiu=list",
+            type:"POST",
+            contentType:"application/json;charset=UTF-8",
+            beforeSend: ajaxLoading,
+            success:function (result) {
+                var shuj = JSON.parse(result);
+                var allTime = shuj.data;
+                var dayList = [];
+                for(var i=0;i<allTime.length;i++){
+                    dayList.push(allTime[i].keDateTime);
+                }
+                list2Calend(dayList);
+                ajaxLoadEnd();
+            }
+        });
+        function  curMon(curYear,curMonth,curTime) {
+            var send_cData = {};
+            var newUrl = "/sdpk/aaQuery?qqiu=list&empUuid=allGet&year="+curYear+"&&month=" +curMonth+"&&today="+curTime;
+            $.ajax({
+
+                url:newUrl,
+                type: "GET",
+                //data: JSON.stringify(param),
+                data: JSON.stringify(send_cData),
+                contentType: "application/json;charset=UTF-8",
+                success:function(result){
+                    huiFuncList(result);
+//                    var shuj = JSON.parse(result);
+//                    var allTime = shuj.data[0];
+//                    var dayList = [];
+//                    for(var i=0;i<allTime.length;i++){
+//                        dayList.push(allTime[i].keDateTime);
+//                    }
+//                    console.log(dayList);
+//                    list2Calend(dayList);
+                }
+
+            });
+
+
+            function huiFuncList(result){
+
+                var a2obj = {};
+                a2obj = JSON.parse(result);
+                var a2data = a2obj.data;
+                var a2dataAll = a2data[0];
+                table_ye2 = $('#paike_biao').DataTable( {
+                    "dom":'frtpi',
+                    bSort:true,
+                    "bLengthChange":false,
+                    scrollX :670,
+                    language: {
+                        "sProcessing": "处理中...",
+                        "sLengthMenu": "显示 _MENU_ 项结果",
+                        "sZeroRecords": "没有匹配结果",
+                        "sInfo": "共 _TOTAL_ 项",
+                        "sInfoEmpty": "共 0 项",
+                        "sInfoFiltered": "(由 _MAX_ 项结果过滤)",
+                        "sInfoPostFix": "",
+                        "sSearch": "搜索:",
+                        "sUrl": "",
+                        "sEmptyTable": "表中数据为空",
+                        "sLoadingRecords": "载入中...",
+                        "sInfoThousands": ",",
+                        "oPaginate": {
+                            "sFirst": "首页",
+                            "sPrevious": "上页",
+                            "sNext": "下页",
+                            "sLast": "末页"
+                        },
+                        "oAria": {
+                            "sSortAscending": ": 以升序排列此列",
+                            "sSortDescending": ": 以降序排列此列"
+                        }
+                    },//国际化语言结束
+                    destroy:true,//表示可重复加载
+                    "scrollX": true,
+                    scrollY:false,
+                    data: a2dataAll,
+                    columns: [
+                        { "data": "claName" },
+                        { "data": "courseName" },
+//            { "data": "categoryName" },
+                        { "data": "pkTypeName" },
+                        { "data": "keDateTime" },
+                        { "data": "keStartTime" },
+                        { "data": "weekSome" },
+                        { "data": "empName" },
+                        { "data": "croomName" },
+                        { "data": "keLongTime" }
+                    ]
+                } );
+                //展示列表数据，默认本月结束
+
+
+//        日历点击事件
+                $('#ye_3_content02_date').calendar({
+                    onSelect:function (date) {
+                        var curYear = date.getFullYear();
+                        var curMonth = date.getMonth()+1;
+                        if(curMonth<10){
+                            curMonth = "0"+curMonth;
+                        }
+                        var curDate = date.getDate();
+                        if(curDate<10){
+                            curDate = "0"+curDate;
+                        }else {
+                            curDate = curDate;
+                        }
+                        var curTime =curYear+"-"+curMonth+"-"+curDate;//获取点击的时间
+                        var arrIndex = [];
+                        for(var i=0;i<a2dataAll.length;i++){
+                            if(a2dataAll[i].keDateTime == curTime){
+                                arrIndex.push(i);
+                            }
+                        }
+//                alert(arrIndex);
+                        var currTable={};
+                        var xppArr = [];
+                        for(var i=0;i<arrIndex.length;i++){
+                            currTable= a2dataAll[arrIndex[i]];
+                            xppArr.push(currTable);
+                        }
+//                        console.log(xppArr);
+                        var curD = $('#paike_biao').DataTable( {
+                            "dom":'frtpi',
+                            "bLengthChange":false,
+                            language: {
+                                "sProcessing": "处理中...",
+                                "sLengthMenu": "显示 _MENU_ 项结果",
+                                "sZeroRecords": "没有匹配结果",
+                                "sInfo": "共 _TOTAL_ 项",
+                                "sInfoEmpty": "共 0 项",
+                                "sInfoFiltered": "(由 _MAX_ 项结果过滤)",
+                                "sInfoPostFix": "",
+                                "sSearch": "搜索:",
+                                "sUrl": "",
+                                "sEmptyTable": "表中数据为空",
+                                "sLoadingRecords": "载入中...",
+                                "sInfoThousands": ",",
+                                "oPaginate": {
+                                    "sFirst": "首页",
+                                    "sPrevious": "上页",
+                                    "sNext": "下页",
+                                    "sLast": "末页"
+                                },
+                                "oAria": {
+                                    "sSortAscending": ": 以升序排列此列",
+                                    "sSortDescending": ": 以降序排列此列"
+                                }
+                            },//国际化语言结束
+                            destroy:true,//表示可重复加载
+                            "scrollX": true,
+                            scrollY:false,
+                            data: xppArr,
+                            columns: [
+                                { "data": "claName" },
+                                { "data": "courseName" },
+                                { "data": "pkTypeName" },
+                                { "data": "keDateTime" },
+                                { "data": "keStartTime" },
+                                { "data": "weekSome" },
+                                { "data": "empName" },
+                                { "data": "croomName" },
+                                { "data": "keLongTime" }
+                            ]
+                        } );
+
+
+                    }
+                    /*onNavigate:function(year,_609){
+                     console.log(609);
+                     }*/
+                });
+
+
+            }
+        }
+        curMon(curYear,curMonth,curTime);
+
+
+//本月列表加载及点击事件结束
+        /*点击所有按钮事件开始*/
+        $('#all').click(function(){
+
+                var data =new Date();
+                var curYear = data.getFullYear();
+                var curMonth = data.getMonth()+1;
+                var curDay = data.getDate();
+                if(curMonth<10){
+                    curMonth = "0"+curMonth;
+                }
+                if(curMonth<10){
+                    curDay = "0"+curDay;
+                }
+                var curTime =curYear+"-"+curMonth+"-"+curDay;
+                var courseAll = {};
+                courseAll.keDateTime =curTime;
+                $.ajax({
+                    url:"/sdpk/aaQueKeAll?qqiu=list",
+                    type:"POST",
+                    contentType:"application/json;charset=UTF-8",
+                    success:function (result) {
+                       huidata(result);
+//                        var shuj = JSON.parse(result);
+//                        var allTime = shuj.data;
+//                        var dayList = [];
+//                        for(var i=0;i<allTime.length;i++){
+//                            dayList.push(allTime[i].keDateTime);
+//                        }
+//                        list2Calend(dayList);
+                    }
+                });
+                function huidata(result) {
+                    var obj = {};
+                    obj = JSON.parse(result);
+                    var objData = obj.data;
+                    console.log(objData);
+                    table_ye2 = $('#paike_biao').DataTable( {
+                        "dom":'frtpi',
+                        bSort:true,
+                        "bLengthChange":false,
+                        scrollX :670,
+                        language: {
+                            "sProcessing": "处理中...",
+                            "sLengthMenu": "显示 _MENU_ 项结果",
+                            "sZeroRecords": "没有匹配结果",
+                            "sInfo": "共 _TOTAL_ 项",
+                            "sInfoEmpty": "共 0 项",
+                            "sInfoFiltered": "(由 _MAX_ 项结果过滤)",
+                            "sInfoPostFix": "",
+                            "sSearch": "搜索:",
+                            "sUrl": "",
+                            "sEmptyTable": "表中数据为空",
+                            "sLoadingRecords": "载入中...",
+                            "sInfoThousands": ",",
+                            "oPaginate": {
+                                "sFirst": "首页",
+                                "sPrevious": "上页",
+                                "sNext": "下页",
+                                "sLast": "末页"
+                            },
+                            "oAria": {
+                                "sSortAscending": ": 以升序排列此列",
+                                "sSortDescending": ": 以降序排列此列"
+                            }
+                        },//国际化语言结束
+                        destroy:true,//表示可重复加载
+                        "scrollX": true,
+                        scrollY:false,
+                        data: objData,
+                        columns: [
+                            { "data": "claName" },
+                            { "data": "courseName" },
+//            { "data": "categoryName" },
+                            { "data": "pkTypeName" },
+                            { "data": "keDateTime" },
+                            { "data": "keStartTime" },
+                            { "data": "weekSome" },
+                            { "data": "empName" },
+                            { "data": "croomName" },
+                            { "data": "keLongTime" }
+                        ]
+                    } );
+
+//        日历点击事件
+                    $('#ye_3_content02_date').calendar({
+                        onSelect:function (date) {
+                            var curYear = date.getFullYear();
+                            var curMonth = date.getMonth()+1;
+                            if(curMonth<10){
+                                curMonth = "0"+curMonth;
+                            }
+                            var curDate = date.getDate();
+                            if(curDate<10){
+                                curDate = "0"+curDate;
+                            }else {
+                                curDate = curDate;
+                            }
+                            var curTime =curYear+"-"+curMonth+"-"+curDate;//获取点击的时间
+                            var arrIndex = [];
+                            for(var i=0;i<objData.length;i++){
+                                if(objData[i].keDateTime == curTime){
+                                    arrIndex.push(i);
+                                }
+                            }
+//                alert(arrIndex);
+                            var currTable={};
+                            var xppArr = [];
+                            for(var i=0;i<arrIndex.length;i++){
+                                currTable= objData[arrIndex[i]];
+                                xppArr.push(currTable);
+                            }
+//                        console.log(xppArr);
+                            var curD = $('#paike_biao').DataTable( {
+                                "dom":'frtpi',
+                                "bLengthChange":false,
+                                language: {
+                                    "sProcessing": "处理中...",
+                                    "sLengthMenu": "显示 _MENU_ 项结果",
+                                    "sZeroRecords": "没有匹配结果",
+                                    "sInfo": "共 _TOTAL_ 项",
+                                    "sInfoEmpty": "共 0 项",
+                                    "sInfoFiltered": "(由 _MAX_ 项结果过滤)",
+                                    "sInfoPostFix": "",
+                                    "sSearch": "搜索:",
+                                    "sUrl": "",
+                                    "sEmptyTable": "表中数据为空",
+                                    "sLoadingRecords": "载入中...",
+                                    "sInfoThousands": ",",
+                                    "oPaginate": {
+                                        "sFirst": "首页",
+                                        "sPrevious": "上页",
+                                        "sNext": "下页",
+                                        "sLast": "末页"
+                                    },
+                                    "oAria": {
+                                        "sSortAscending": ": 以升序排列此列",
+                                        "sSortDescending": ": 以降序排列此列"
+                                    }
+                                },//国际化语言结束
+                                destroy:true,//表示可重复加载
+                                "scrollX": true,
+                                scrollY:false,
+                                data: xppArr,
+                                columns: [
+                                    { "data": "claName" },
+                                    { "data": "courseName" },
+                                    { "data": "pkTypeName" },
+                                    { "data": "keDateTime" },
+                                    { "data": "keStartTime" },
+                                    { "data": "weekSome" },
+                                    { "data": "empName" },
+                                    { "data": "croomName" },
+                                    { "data": "keLongTime" }
+                                ]
+                            } );
+
+
+                        }
+                        /*onNavigate:function(year,_609){
+                         console.log(609);
+                         }*/
+                    });
+
+                }
+        });
+        /*点击所有按钮事件结束*/
+    //步骤1_2展示列表日历数据
+
+    function huiFuncListCalend(result){
+
+    var keDayList = new Array();
+    var a2obj = {};
+    a2obj = JSON.parse(result);
+    var a2data = a2obj.data;
+    $.each(a2data, function (index, obj) {
+                // alert(index + "...日期有..." + obj.keDateTime);
+                var dateStr = new String(obj.keDateTime);
+                keDayList.push(dateStr);
+            });
+    return keDayList;
+    }// end  huiFuncList外圈 1_x1
+
+     //数组转日历并展示
+     function list2Calend(dayList){
+            $('#ye_3_content02_date').calendar({
+                current:new Date(),
+                formatter: function(date){
+                    var d = date.getDate();
+                    var opts = $(this).calendar('options');
+                    var flag = false;
+                    //for循环遍历
+                    for(var i=0;i<dayList.length;i++){
+                        var str = new String(dayList[i]);
+                        str = str.replace(/-/g,"/");
+                        var oneDay = new Date(str );
+                        var y1 = oneDay.getFullYear(); //获取完整的年份(4位,1970-????)
+                        var m1 = oneDay.getMonth()+1; //获取当前月份(0-11,0代表1月)
+                        var d1 = oneDay.getDate(); //获取当前日(1-31)
+//                        console.log(y1,m1,d1);
+                        if (opts.year==y1&&opts.month == m1 && d == d1){
+                            // alert("匹配了"+opts.year+"___"+opts.month+"___"+d);
+                            flag = true;
+                        }
+                    }//end for循环遍历
+                    if (flag) {return '<div class="icon-search md">' + d + '</div>';}else{return d;}
+
+                }//end method formatter
+
+            });//日历
+            var data =new Date();
+            var curYear = data.getFullYear();
+            var curMonth = data.getMonth()+1;
+            var curDay = data.getDate();
+            if(curMonth<10){
+                curMonth = "0"+curMonth;
+            }
+            if(curDay<10){
+                curDay = "0"+curDay;
+            }
+            /*点击月份+++++开始*/
+                $('.calendar-nextmonth').on("click",function(){
+                    var dataAll = {};
+                    curMonth =Number(curMonth)+1;
+                    if(curMonth>12){
+                        curMonth ='0'+1;
+                        curYear = curYear+1;
+                    }else if(curMonth>=0&&curMonth<10) {
+                        curMonth = "0"+curMonth;
+                    }
+                    curTime =curYear+"-"+curMonth+"-"+curDay;
+                    console.log(curTime);
+                    curMon(curYear,curMonth,curTime);
+
+            });
+            /*点击月份+++++结束*/
+            /*点击月份----开始*/
+                $('.calendar-prevmonth').on("click",function(){
+                    var dataAll = {};
+                    curMonth =Number(curMonth)-1;
+                    if(curMonth<1){
+                        curMonth =12;
+                        curYear = curYear-1;
+                    }else if(curMonth>=1&&curMonth<10) {
+                        curMonth = "0"+curMonth;
+                    }
+                    curTime =curYear+"-"+curMonth+"-"+curDay;
+                    console.log(curTime);
+                    curMon(curYear,curMonth,curTime);
+
+                });
+            /*点击月份----结束*/
+            /*点击年份++++开始*/
+                $('.calendar-nextyear').on("click",function(){
+                    var dataAll = {};
+                    curYear =Number(curYear)+1;
+                    curTime =curYear+"-"+curMonth+"-"+curDay;
+                    console.log(curTime);
+                    curMon(curYear,curMonth,curTime);
+                });
+            /*点击年份++++结束*/
+            /*点击年份----开始*/
+                $('.calendar-prevyear').on("click",function(){
+                    var dataAll = {};
+                    curYear =Number(curYear)-1;
+                    curTime =curYear+"-"+curMonth+"-"+curDay;
+                    console.log(curTime);
+                    curMon(curYear,curMonth,curTime);
+                });
+            /*点击年份----结束*/
+        }
+
+} );
+
+    </script>
+
+    <!-- 11月09新增end -->
+
+
+	<script>
+        var ckUuid_ye2;//全局变量
+
+
+		 $(document).ready(function(){
+             //11月14日新增数据代码
+             //步骤1，班级排课按钮，获取cookie中的班级uuid，然后跳转
+             $( "#btnPaike" ).click(function() { 
+
+                    //cookie中取班级uuid
+                    ckUuid_ye2 = $.cookie('UidCla');
+                    console.log("ye2是"+ckUuid_ye2);
+                    window.location.href="3a2_ye3.html"
+
+                    //onclick="window.location='3a2_ye3.html'"
+            });//end 7 外圈 close
+             
+		 	
+});//end 最外层 $(document).ready
+	</script>
+
+	<style type="text/css">
+
+        .md{
+            height:26px;
+            line-height:16px;
+            background-position: 67% 100%;
+            text-align:center;
+            font-weight:bold;
+            padding:0 1px;
+            color:red;
+        }
+        .dataTables_wrapper{
+            top:-40px;
+        }
+	</style>
+</head>
+<body>
+	
+	<div id="fen_3a2detail_container" style="height: 850px;background-color:#FFFFFF;">
+
+		<div id="ye_1_content01" class="class-xq">
+				<!--<div id="litle_a1" class="xq-logo">-->
+				<!--</div>-->
+				<div class="change_add">
+                    <!--<div id="litle_a2" class="tit_txt">-->
+                        <!--<strong class="fir">班级:</strong><strong id="em_claName">__空__</strong>-->
+                    <!--</div>-->
+                    <!--<div id="litle_a3" class="tit_txt">-->
+                        <!--<strong class="fir">开课时间:</strong><em id="em_start">__空__</em>-->
+                        <!--<i>&nbsp;&nbsp;</i>-->
+                        <!--<strong class="fir">开课课程:</strong><em id="em_course">__空__</em>-->
+                    <!--</div>-->
+                    <!--<div id="litle_a4" class="tit_txt">-->
+                        <!--<strong class="fir">所在校区:</strong><em id="em_org">__空__</em>-->
+                        <!--<i>&nbsp;&nbsp;</i>-->
+                        <!--<strong class="fir">班主任:</strong><em id="em_empName">__空__</em>-->
+                        <!--<i>&nbsp;&nbsp;</i>-->
+                        <!--<strong class="fir">学员人数:</strong><em id="em_claNum">__空__</em>-->
+                    <!--</div>-->
+                    全校课表查询
+                </div>
+
+
+				<!--<div id="litle_a5" class="tit-btn">-->
+                    <!--<a class="return-link" href="javascript:window.location.href='3a2_ye1.html';">返回上一页</a>-->
+						<!--<button id="btnPaike" class="btn-class">班级排课</button>-->
+				<!--</div>-->
+				
+
+		</div><!-- end div ye_1_content01 -->
+
+		<div id="ye_2_blank"></div>
+        <div class="add_block">
+            <div class="calen-b">
+                <p>排课日历</p>
+                <div id="ye_3_content02_date"></div>
+            </div>
+
+
+            <div id="ye_4_blank"></div>
+
+            <div id="ye_5_content03_list" class="tab-tab">
+                <div style="position: relative;z-index: 999;">
+                    <button id="all" class="btn-class" style="float: left;z-index: 999;">所有</button>
+                </div>
+
+                <table id="paike_biao" class="display tab-mians" cellspacing="0" width="100%" style="padding-top:0;">
+                    <!--start 表头 -->
+                    <thead class="tab-tit">
+                    <tr>
+                        <th style="min-width:90px;">班级名称</th>
+                        <th style="min-width:90px;">课程名称</th>
+                        <th style="min-width:65px;">类别</th>
+                        <th style="min-width:110px;">上课日期</th>
+                        <th style="min-width:90px;">上课时间</th>
+                        <th style="min-width:75px;">星期</th>
+                        <th style="min-width:90px;">授课老师</th>
+                        <th style="min-width:90px;">授课教室</th>
+                        <th style="min-width:80px;">上课时长</th>
+                    </tr>
+                    </thead>
+                    <!--end 表头 -->
+                    <!-- start 表尾 -->
+                    <tfoot class="tab-tit">
+                    <tr>
+                        <th style="min-width:90px;">班级名称</th>
+                        <th style="min-width:90px;">课程名称</th>
+                        <th style="min-width:65px;">类别</th>
+                        <th style="min-width:110px;">上课日期</th>
+                        <th style="min-width:90px;">上课时间</th>
+                        <th style="min-width:75px;">星期</th>
+                        <th style="min-width:90px;">授课老师</th>
+                        <th style="min-width:90px;">授课教室</th>
+                        <th style="min-width:80px;">上课时长</th>
+                    </tr>
+                    </tfoot>
+                    <!-- end 表尾 -->
+
+                    <tbody>
+                    </tbody>
+                    <!-- 有时候不加tbody会不能选择 -->
+
+
+                    <!-- end 表内容展示区 -->
+                </table>
+
+            </div><!--end div  ye_5_content03_list -->
+
+        </div>
+
+
+
+    <!-- 最后放对话框div -->
+       <!-- <div id="dialog" title="调课编辑" closed="true" style="width:500px;height: 500px;padding-left:45px;">
+                &lt;!&ndash;<p>对话框</p>&ndash;&gt;
+                <form id="ff" name="ffnameDlg" method="post" > 
+        &lt;!&ndash; 对话框展现内容 &ndash;&gt;
+        <table id="dlg_tb" class="tab-style">
+                    &lt;!&ndash; 第一行 &ndash;&gt;
+                    <tr>
+                    <td class="name-s" style="padding-left:0">课&nbsp;&nbsp;&nbsp;&nbsp;程</td>
+                    <td>
+                        <input id="L1ee_dlg"  name="courseUuid" data-options="editable:false" class="easyui-combobox yzss sel_s" style="height: 34px;width:300px;">
+                    </td>
+                    </tr>
+                
+                    <tr>
+                    <td class="name-s" style="padding-left:0">上课日期</td>
+                    <td style="height: 39px;width: 194px;font-size:16px;"><input id="keDateTime_Dlg" type="text" class="easyui-datebox yzss" required="required" style="height: 34px;width:300px;"></td>
+                    </tr>
+
+                    <tr>
+                    <td class="name-s" style="padding-left:0">上课时间</td>
+                    <td style="height: 39px;width: 194px;font-size:16px;"><input id="keStartTime" class="easyui-timespinner yzss" required="required" data-options="min:'07:00',showSeconds:true" style="height: 34px;width:300px;"></td>
+                    </tr>
+                        
+                    <tr>
+                    <td class="name-s" style="padding-left:0">上课时长</td>
+                    <td><input id="keLongTime" class="easyui-numberspinner yzss" required="required" data-options="min:1,max:300,editable:true" style="height: 34px;width:300px;border:none;"></td>
+
+                    </tr>
+
+                    <tr>
+                    <td class="name-s" style="padding-left:0">授课老师</td>
+                    <td>
+                        <input id="L2ee_dlg"  name="empUuid" data-options="editable:false" class="easyui-combobox yzss sel_s" style="height: 34px;width:300px;">
+                    </td>
+
+                    </tr>
+
+                    <tr>
+                    <td class="name-s" style="padding-left:0">教&nbsp;&nbsp;&nbsp;&nbsp;室</td>
+                    <td>
+                        <input id="L3ee_dlg"  name="classroomUuid" data-options="editable:false" class="easyui-combobox yzss sel_s" style="height: 34px;width:300px;">
+                    </td>
+                    </tr>
+                        
+                </table> &lt;!&ndash; end dlg_tb &ndash;&gt;
+                </form>
+                &lt;!&ndash; 按钮div开始 &ndash;&gt;
+                <div class="btn-box" style="margin-right: 50px;margin-top:30px;">
+                    <button  class="easyui-linkbutton btn-xk" id="clearForm">清空</button>
+                    <button  class="easyui-linkbutton btn-qr" id="submitForm">确认</button>
+                 </div>
+                 &lt;!&ndash; 按钮div结束 &ndash;&gt;
+    </div>--><!-- end id=dialog -->
+        <!-- S--公用弹窗 -->
+        <div class="alert-main">
+            <p class="alert-con">此条学生信息已删除</p>
+            <a class="close-item">×</a>
+        </div>
+        <script>
+            $(function () {
+                $('.close-item').click(function(){
+                    $('.alert-main').hide()
+                })
+            })
+        </script>
+        <!-- E--公用弹窗 -->
+</body>
+
+<script>
+    //修改日历宽度
+    $(function(){
+        $("#ye_3_content02_date").css({
+            "width":"370px",
+            "height":"480px"
+
+        });
+    });
+    /*  */
+    $('.validatebox-invalid').css("border","none");
+</script>
+</html>
