@@ -343,87 +343,100 @@
                 var a2obj = {};
                 a2obj = JSON.parse(result);
                 var a2data = a2obj.data;
+                /*第零步：把datatables插件的警告窗变成控制台打印*/
+              $.fn.dataTable.ext.errMode = 'none';
+              //步骤1,展示列表数据
+               table_full = $('#content03_2_tb').DataTable( {
+                "dom":'frtpi',
+                 scrollX :670,
+                "bLengthChange":false,
+                bSort:true,
+                language: {
+                  "sProcessing": "处理中...",
+                  "sLengthMenu": "显示 _MENU_ 项结果",
+                  "sZeroRecords": "没有匹配结果",
+                  "sInfo": "共 _TOTAL_ 项",
+                  "sInfoEmpty": "共 0 项",
+                  "sInfoFiltered": "(由 _MAX_ 项结果过滤)",
+                  "sInfoPostFix": "",
+                  "sSearch": "搜索:",
+                  "sUrl": "",
+                  "sEmptyTable": "表中数据为空",
+                  "sLoadingRecords": "载入中...",
+                  "sInfoThousands": ",",
+                  "oPaginate": {
+                    "sFirst": "首页",
+                    "sPrevious": "上页",
+                    "sNext": "下页",
+                    "sLast": "末页"
+                  },
+                  "oAria": {
+                    "sSortAscending": ": 以升序排列此列",
+                    "sSortDescending": ": 以降序排列此列"
+                  }
+                },//国际化语言结束
+                 data: a2data,
+                "columns": [
+                  {
+                    "data": null,
+//                    "searchable": true,
+                    "title": "多选"
+                  },
+                  {"data": "courseName"},
+                  {"data": "courConflict"},
+                  {"data": "pkTypeName"},
+                  {"data": "keDateTime"},
+                  {"data": "keStartTime"},
+                  {"data": "weekSome"},
+                  {"data": "empName"},
+                  {"data": "empConflict"},
+                  {"data": "croomName"},
+                  {"data": "croomConflict"}
+                ],
+                "columnDefs":[{
+                  "targets": 0,
+                  "name": "状态",
+                  "cellType": "th",
+                  "orderDataType": "dom-text",
+                  "orderSequence": [ "desc","asc", "asc" ],
+                  "className": "my_class",
+                  "contentPadding": "mmm",
+                  "createdCell": function (td, cellData, rowData, row, col) {
+                    $(td).context.innerHTML='<input class="checkchild" type="checkbox"/>';
+                  }
+                }],
+                 "fnRowCallback": function (nRow, aData, iDisplayIndex, iDisplayIndexFull) {
 
-                table_full = $('#content03_2_tb').DataTable({
-                    "dom":'frtpi',
-                    bSort:true,
-                    scrollX :670,
-                    "bLengthChange":false,
-                    language: {
-                        "sProcessing": "处理中...",
-                        "sLengthMenu": "显示 _MENU_ 项结果",
-                        "sZeroRecords": "没有匹配结果",
-                        "sInfo": "共 _TOTAL_ 项",
-                        "sInfoEmpty": "共 0 项",
-                        "sInfoFiltered": "(由 _MAX_ 项结果过滤)",
-                        "sInfoPostFix": "",
-                        "sSearch": "搜索:",
-                        "sUrl": "",
-                        "sEmptyTable": "表中数据为空",
-                        "sLoadingRecords": "载入中...",
-                        "sInfoThousands": ",",
-                        "oPaginate": {
-                            "sFirst": "首页",
-                            "sPrevious": "上页",
-                            "sNext": "下页",
-                            "sLast": "末页"
-                        },
-                            "oAria": {
-                                "sSortAscending": ": 以升序排列此列",
-                                "sSortDescending": ": 以降序排列此列"
-                            }
-                        },//国际化语言结束
-                    "scrollCollapse": "true",
-                    destroy: true,
-                    data: a2data,
-                    columns: [
-                        {"data": "courseName"},
-                        {"data": "courConflict"},
-                        {"data": "pkTypeName"},
-                        {"data": "keDateTime"},
-                        {"data": "keStartTime"},
-                        {"data": "weekSome"},
-                        {"data": "empName"},
-                        {"data": "empConflict"},
-                        {"data": "croomName"},
-                        {"data": "croomConflict"}
-                    ],
-                    "columnDefs":[{
-                        "targets": 1,
-                        "name": "无"
-                    }],
-                    "fnRowCallback": function (nRow, aData, iDisplayIndex, iDisplayIndexFull) {
+                   // aData 一行数据，td:eq(2)第3个单元格
 
-                        // aData 一行数据，td:eq(2)第3个单元格
+                   // if (aData.categoryName == "1200A") {
 
-                        // if (aData.categoryName == "1200A") {
+                   //     $('td:eq(2)', nRow).html('<b style="color:red;background-color:#00FF00;">A</b>');
 
-                        //     $('td:eq(2)', nRow).html('<b style="color:red;background-color:#00FF00;">A</b>');
+                   // }
+                   if (aData.courConflict) {
 
-                        // }
-                        if (aData.courConflict) {
+                     $('td:eq(1)', nRow).html('<b style="color:red;">冲突</b>');
+                   }else {
+                     $('td:eq(1)', nRow).html('无');
+                   }
+                   if (aData.empConflict) {
 
-                            $('td:eq(1)', nRow).html('<b style="color:red;">冲突</b>');
-                        }else {
-                            $('td:eq(1)', nRow).html('无');
-                        }
-                        if (aData.empConflict) {
+                     $('td:eq(7)', nRow).html('<b style="color:red;">冲突</b>');
 
-                            $('td:eq(7)', nRow).html('<b style="color:red;">冲突</b>');
+                   }else {
+                     $('td:eq(7)', nRow).html('无');
+                   }
+                   if (aData.croomConflict) {
 
-                        }else {
-                            $('td:eq(7)', nRow).html('无');
-                        }
-                        if (aData.croomConflict) {
-
-                            $('td:eq(9)', nRow).html('<b style="color:red;">冲突</b>');
-                        } else{
-                            $('td:eq(9)', nRow).html('无');
-                        }
+                     $('td:eq(9)', nRow).html('<b style="color:red;">冲突</b>');
+                   } else{
+                     $('td:eq(9)', nRow).html('无');
+                   }
 
 
-                    }//end method fnRowCallback 给每行指定数据显示红色字体
-                });
+                 }//end method fnRowCallback 给每行指定数据显示红色字体
+              } );//end 外圈  $('#example').DataTable
             }// end 1_x1 外圈
 
 
@@ -449,7 +462,47 @@
                 }
 
             });//end 3 外圈 $('#delbut').click
-
+          //批量删除功能
+          $('#delbutMore').click(function(){
+            var msg = "确定删除这些排课信息么？";
+            var msg1 = "请勾选至少一条排课信息！";
+            if($(".checkchild:checkbox:checked").length==0){
+              alert(msg1);
+              return false;
+            }else{
+              if(confirm(msg) == true){
+                table_full.$('tr.selected').removeClass('selected');
+                $(".checkchild:checkbox:checked").parent().parent().addClass('checked');
+                if($(".checkchild:checkbox:checked").length == $('.checkchild').length){
+                  table_full.clear().draw();
+                  $('.checkall').each(function () {
+                    this.checked = false;
+                  });
+                }else{
+                  for(var i = $(".checkchild:checkbox:checked").length-1;i>=0;i--){
+                    table_full.row('.checked').remove().draw(false);//图形删除，没有传到后台接口
+                  }
+                }
+              }else {
+                return false;
+              }
+            }
+          })
+          //datatable全选
+          $('.checkall').on('click', function () {
+            if (this.checked) {
+              $(this).attr('checked','checked')
+              $('.checkchild').each(function () {
+                this.checked = true;
+              });
+            } else {
+              $(this).removeAttr('checked')
+              console.log($('.checkchild'));
+              $('.checkchild').each(function () {
+                this.checked = false;
+              });
+            }
+          });
             //步骤4，对话框初始配置
             $("#dialog").dialog({
                 autoOpen: false,
@@ -501,7 +554,7 @@
                 //步骤1_a1，完成下拉框L3
                 huiEditFunc2(result);
                 $('#L2ee_dlg').combobox('setValue', rowData.empUuid);
-                $('#L4ee_dlg').combobox('setValue', rowData.pkTypeName);
+                $('#L4ee_dlg').combobox('setValue', rowData.pkType);
             }
 
         });
@@ -620,13 +673,9 @@
         document.ffnameDlg.keStartTime.value= rowData.keStartTime;
         document.ffnameDlg.keLongTime.value= rowData.keLongTime;
         // document.ffnameDlg.empUuid.value= rowData.empUuid;
-
         var n1 = document.ffnameDlg.keDateTime_Dlg.value; //定义个变量n接收表单中的值
-
         //调用父级弹窗end
       $( "#dialog" ).dialog( "open" );
-    
-
     });//end 5 外圈 opener 结束打开对话框
 
             //步骤6，编辑确定事件
@@ -655,7 +704,6 @@
                 send_edit_data.keLongTime = document.ffnameDlg.keLongTime.value;
                 send_edit_data.pkType = document.ffnameDlg.pkType.value;
                 send_edit_data.status = "正常";
-
                 console.log(send_edit_data);
                 $.ajax({
                     url: "/sdpk/aaPaiKe?qqiu=queryConflict",
@@ -704,9 +752,16 @@
                 rowData.categoryName = a2data[0].categoryName;
                 rowData.pkType = a2data[0].pkType;
 
+//                rowData.checkbox
 
                 //重新画选择行数据
-                table_full.row('.selected').data(rowData).draw();
+              table_full.row('.selected').data(rowData).draw();
+              var selectedRow = table_full.row('.selected').context[0];
+              for(var i=0;i<table_full.row('.selected').context[0].aoData.length;i++){
+                if(selectedRow.aoData[i].nTr.className=='even selected'||selectedRow.aoData[i].nTr.className=='odd selected'){
+                  selectedRow.aoData[i].anCells[0].innerHTML='<input class="checkchild" type="checkbox"/>';
+                }
+              }
 
                 var allData = {};
                 allData = table_full.data();
@@ -967,7 +1022,8 @@
         <div id="ye_6_content03_partRight" class="main-right">
 
             <div id="content03_1_div" class="tab-tab">
-                <button id="delbut" class="btn-class del-btn">删除</button>
+                <button id="delbutMore" class="btn-class del-btn">批量删除</button>
+                <button id="delbut" class="btn-class del-btn"style="margin-right: 10px;">删除</button>
                 <button id="opener" class="btn-class">编辑</button>
 
                 <table id="content03_2_tb" class="display tab-mians" cellspacing="0" width="100%">
@@ -975,6 +1031,9 @@
                     <!--start 表头 -->
                     <thead class="tab-tit">
                     <tr>
+                        <th class='th'style="min-width:60px;">
+                            多选<input type="checkbox" class="checkall"style="display:none;" />
+                        </th>
                         <th style="min-width:90px;">课程</th>
                         <th style="min-width:60px;">(冲突)</th>
                         <th style="min-width:60px;">类别</th>
@@ -991,6 +1050,9 @@
                     <!-- start 表尾 -->
                     <tfoot class="tab-tit">
                     <tr>
+                        <th class='th'style="min-width:60px;">
+                            多选<input type="checkbox" class="checkall"style="display:none;" />
+                        </th>
                         <th style="min-width:90px;">课程</th>
                         <th style="min-width:60px;">(冲突)</th>
                         <th style="min-width:60px;">类别</th>

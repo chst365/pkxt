@@ -320,6 +320,11 @@
         destroy:true,
         data: a2data,
         columns: [
+		    {
+				"data": null,
+	//                    "searchable": true,
+				"title": "多选"
+			},
             { "data": "courseName" },
             { "data": "courConflict" },
             { "data": "pkTypeName" },
@@ -331,6 +336,18 @@
             { "data": "croomName" },
             { "data": "croomConflict" }
         ],
+		  "columnDefs":[{
+			"targets": 0,
+			"name": "状态",
+			"cellType": "th",
+			"orderDataType": "dom-text",
+			"orderSequence": [ "desc","asc", "asc" ],
+			"className": "my_class",
+			"contentPadding": "mmm",
+			"createdCell": function (td, cellData, rowData, row, col) {
+			  $(td).context.innerHTML='<input class="checkchild" type="checkbox"/>';
+			}
+		  }],
         "fnRowCallback": function (nRow, aData, iDisplayIndex, iDisplayIndexFull) {
 
             // aData 一行数据，td:eq(2)第3个单元格
@@ -378,7 +395,47 @@
         }//end if 
 
     } );//end 2 外圈 $('#example tbody').on
-
+   //批量删除功能
+   $('#delbutMore').click(function(){
+	 var msg = "确定删除这些排课信息么？";
+	 var msg1 = "请勾选至少一条排课信息！";
+	 if($(".checkchild:checkbox:checked").length==0){
+	   alert(msg1);
+	   return false;
+	 }else{
+	   if(confirm(msg) == true){
+		 table_full.$('tr.selected').removeClass('selected');
+		 $(".checkchild:checkbox:checked").parent().parent().addClass('checked');
+		 if($(".checkchild:checkbox:checked").length == $('.checkchild').length){
+		   table_full.clear().draw();
+		   $('.checkall').each(function () {
+			 this.checked = false;
+		   });
+		 }else{
+		   for(var i = $(".checkchild:checkbox:checked").length-1;i>=0;i--){
+			 table_full.row('.checked').remove().draw(false);//图形删除，没有传到后台接口
+		   }
+		 }
+	   }else {
+		 return false;
+	   }
+	 }
+   })
+   //datatable全选
+   $('.checkall').on('click', function () {
+	 if (this.checked) {
+	   $(this).attr('checked','checked')
+	   $('.checkchild').each(function () {
+		 this.checked = true;
+	   });
+	 } else {
+	   $(this).removeAttr('checked')
+	   console.log($('.checkchild'));
+	   $('.checkchild').each(function () {
+		 this.checked = false;
+	   });
+	 }
+   });
     //步骤3，删除按钮单击事件
     $('#delbut').click( function () {
         var msg = "确定删除此条排课信息么？";
@@ -440,7 +497,7 @@
                 //步骤1_a1，完成下拉框L3
                 huiEditFunc2(result);
                 $('#L2ee_dlg').combobox('setValue', rowData.empUuid);
-                $('#L4ee').combobox('setValue', rowData.pkTypeName);
+                $('#L4ee').combobox('setValue', rowData.pkType);
             }
 
         });
@@ -639,8 +696,14 @@
          rowData.categoryName = a2data[0].categoryName;
 
 
-         //重新画选择行数据
-         table_full.row( '.selected' ).data( rowData ).draw();
+      //重新画选择行数据
+      table_full.row('.selected').data(rowData).draw();
+      var selectedRow = table_full.row('.selected').context[0];
+      for(var i=0;i<table_full.row('.selected').context[0].aoData.length;i++){
+        if(selectedRow.aoData[i].nTr.className=='even selected'||selectedRow.aoData[i].nTr.className=='odd selected'){
+          selectedRow.aoData[i].anCells[0].innerHTML='<input class="checkchild" type="checkbox"/>';
+        }
+      }
 
     	var allData = {};
     	 allData = table_full.data();
@@ -831,8 +894,8 @@
 	<div id="ye_6_content03_partRight" class="main-right">
 
 		<div id="content03_1_div" class="tab-tab">
-
-			<button id="delbut" class="btn-class del-btn">删除</button>
+			<button id="delbutMore" class="btn-class del-btn">批量删除</button>
+			<button id="delbut" class="btn-class del-btn"style="margin-right: 10px;">删除</button>
 			<button id="opener" class="btn-class">编辑</button>
 
 			<table id="content03_2_tb" class="display tab-mians" cellspacing="0" width="100%">
@@ -840,6 +903,9 @@
 				<!--start 表头 -->
 				<thead class="tab-tit">
 				<tr>
+					<th class='th'style="min-width:60px;">
+						多选<input type="checkbox" class="checkall"style="display:none;" />
+					</th>
 					<th style="min-width:90px;">课程</th>
 					<th style="min-width:60px;">(冲突)</th>
 					<th style="min-width:60px;">类别</th>
@@ -856,6 +922,9 @@
 				<!-- start 表尾 -->
 				<tfoot class="tab-tit">
 				<tr>
+					<th class='th'style="min-width:60px;">
+						多选<input type="checkbox" class="checkall"style="display:none;" />
+					</th>
 					<th style="min-width:90px;">课程</th>
 					<th style="min-width:60px;">(冲突)</th>
 					<th style="min-width:60px;">类别</th>
@@ -973,7 +1042,7 @@
 	/* 复选框样式 */
 	$(function(){
 	    $('.data-main .check-class').click(function(){
-	        if($(this).hasClass("oncheck")){
+	        if(!$(this).children()[0].checked){
 	          $(this).removeClass("oncheck");
 			}else {
 	            $(this).addClass("oncheck");

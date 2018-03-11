@@ -320,6 +320,10 @@ tbody tr:hover{
     width:16px;
     height:16px;
     color:#666;
+    position: absolute;
+    left: 1px;
+    top: 1px;
+    z-index: 20;
 }
 #content02_4_div{
     margin-top:20px;
@@ -330,12 +334,16 @@ tbody tr:hover{
     padding-left:10px;
 }
 /* checkbox样式修改 */
+/* checkbox样式修改 */
 .check-class{
     display: inline-block;
     width:20px;
     height:20px;
     background: url(../HMimages/checkbox_01.png) no-repeat left top;
     background-position: 0 0;
+    position: relative;
+    top:5px;
+    z-index: 10;
 }
 .oncheck{
     display: inline-block;

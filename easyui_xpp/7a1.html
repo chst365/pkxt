@@ -135,12 +135,13 @@
 
             //验证学生名称
             function yzxsmc() {
-                if (document.getElementById("stuUuid").value == '请选择学生') {
-                    alert('请选择学生名称');
-                    return false;
-                } else {
-                    return true;
-                }
+              var sel = $('#stuUuid').combobox("getValue");
+              if(sel=="请选择学生" || sel == "" || sel == null){
+                alert("请选择学生名称");
+                return false;
+              }else{
+                return true;
+			  }
             }
 
             //验证所在校区
@@ -155,7 +156,6 @@
 
 
             $( "#submitForm" ).click(function() {
-                //$('#ff').form('submit');
                 var flag = false;
                 var f1 = yzV1();
                 var f5 = yzxsmc();
@@ -164,99 +164,54 @@
                 var f3 = yzNumBox();
                 var f4 = yzSkSize();
                 talpri();//总价格，总课数计算结束
-                $( "#dialogSave" ).dialog( "open" );
+
                 if($( "#dialogSave" ).is(":hidden")){
-                    // if (f1 == true && f2 == true && f3 == true) {
-                    //     flag = true;
-                    // }
-                    // if (flag) {
-                    //     var param = $("#ff").serializeObject();
-                    //     param.uuid = tabledata.uuid;
-                    //     param.cNum = document.getElementById("cNum").value;
-                    //     param.cRemark = document.getElementById("cRemark").value;
-                    //     param.stuUuid = $('#stuUuid').combobox("getValues")[0];
-                    //     param.cDate = $("#cDate").datebox("getValue");
-                    //     param.org = document.getElementById("org").value;
-                    //     param.totalCount = document.getElementById("totalCount").value;
-                    //     param.totalPrice = document.getElementById("totalPrice").value;
-                    //     param.sumLineDownB = document.getElementById("sumLineDownB").value;
-                    //     param.sumLineUpA = document.getElementById("sumLineUpA").value;
-                    //     param.conPriceList = [];
-                    //     // RowsDataList = RowDataList || tablePrice.rows().data();
-                    //     if(RowDataList.length){
-                    //         RowsDataList = tablePrice.rows().data();
-                    //     }else{
-                    //         RowsDataList = RowDataList;
-                    //     }
-                    //     console.log(RowDataList.length);
-                    //     for (var i = 0; i < RowsDataList.length; i++) {
-                    //         if (RowsDataList[i].priceType == '线上') {
-                    //             RowsDataList[i].priceType = 'LineUpA';
-                    //         } else if (RowsDataList[i].priceType == '线下') {
-                    //             RowsDataList[i].priceType = 'LineDownB';
-                    //         }
-                    //         param.conPriceList.push(RowsDataList[i]);
-                    //     }
-                    //     console.log(param);
-                    //     $.ajax({
-                    //
-                    //         url:"/sdpk/aaContrtext?qqiu=edit",
-                    //         type: "POST",
-                    //         data: JSON.stringify(param),
-                    //         // data: JSON.stringify(send_edit_data),
-                    //         contentType: "application/json;charset=UTF-8",
-                    //         success:function(result){
-                    //             result = JSON.parse(result);
-                    //             alert(result.message);
-                    //             $( "#dialog" ).dialog( "close" );
-                    //             window.location.reload();
-                    //         }
-                    //
-                    //     });
-                    // }
                     if (f1 == true && f2 == true && f3 == true && f4 == true && f5 == true && f6 == true) {
                         flag = true;
                     }
+                  console.log(f1,f2,f3,f4,f5,f6);
                     if (flag) {
-                        var param = $("#ff").serializeObject();
-                        param.cNum = document.getElementById("cNum").value;
-                        param.cRemark = document.getElementById("cRemark").value;
-                        param.stuUuid = $('#stuUuid').combobox("getValues")[0];
-                        param.cDate = $("#cDate").datebox("getValue");
-                        param.org = document.getElementById("org").value;
-                        param.totalCount = document.getElementById("totalCount").value;
-                        param.totalPrice = document.getElementById("totalPrice").value;
-                        param.sumLineDownB = document.getElementById("sumLineDownB").value;
-                        param.sumLineUpA = document.getElementById("sumLineUpA").value;
-                        param.conPriceList = [];
 
-                        for (var i = 0; i < RowDataList.length; i++) {
-                            if (RowDataList[i].priceType == '线上') {
-                                RowDataList[i].priceType = 'LineUpA';
-                            } else if (RowDataList[i].priceType == '线下') {
-                                RowDataList[i].priceType = 'LineDownB';
-                            }
-                            param.conPriceList.push(RowDataList[i]);
-                        }
-                        console.log(param);
-                        $.ajax({
-
-                            url: "/sdpk/aaContrtext?qqiu=add",
-                            type: "POST",
-                            //data: JSON.stringify(param),
-                            data: JSON.stringify(param),
-                            contentType: "application/json;charset=UTF-8",
-                            success: function (result) {
-                                result = JSON.parse(result);
-                                alert(result.message);
-                                //调用父级弹窗start
-                                $( "#dialogSave" ).dialog( "close" );
-                                var $parent = self.parent.$;
-                                $parent('#menu_g2').click();
-                                //调用父级弹窗end
-                            }
-
-                        });
+                      $( "#dialogSave" ).dialog( "open" );
+//                        var param = $("#ff").serializeObject();
+//                        param.cNum = document.getElementById("cNum").value;
+//                        param.cRemark = document.getElementById("cRemark").value;
+//                        param.stuUuid = $('#stuUuid').combobox("getValues")[0];
+//                        param.cDate = $("#cDate").datebox("getValue");
+//                        param.org = document.getElementById("org").value;
+//                        param.totalCount = document.getElementById("totalCount").value;
+//                        param.totalPrice = document.getElementById("totalPrice").value;
+//                        param.sumLineDownB = document.getElementById("sumLineDownB").value;
+//                        param.sumLineUpA = document.getElementById("sumLineUpA").value;
+//                        param.conPriceList = [];
+//
+//                        for (var i = 0; i < RowDataList.length; i++) {
+//                            if (RowDataList[i].priceType == '线上') {
+//                                RowDataList[i].priceType = 'LineUpA';
+//                            } else if (RowDataList[i].priceType == '线下') {
+//                                RowDataList[i].priceType = 'LineDownB';
+//                            }
+//                            param.conPriceList.push(RowDataList[i]);
+//                        }
+//                        console.log(param);
+//                        $.ajax({
+//
+//                            url: "/sdpk/aaContrtext?qqiu=add",
+//                            type: "POST",
+//                            //data: JSON.stringify(param),
+//                            data: JSON.stringify(param),
+//                            contentType: "application/json;charset=UTF-8",
+//                            success: function (result) {
+//                                result = JSON.parse(result);
+//                                alert(result.message);
+//                                //调用父级弹窗start
+//                                $( "#dialogSave" ).dialog( "close" );
+//                                var $parent = self.parent.$;
+//                                $parent('#menu_g2').click();
+//                                //调用父级弹窗end
+//                            }
+//
+//                        });
 
                     } else {
                         alert("补填后，再点击!");
@@ -365,8 +320,9 @@
                 var f2 = yzDate();
                 var f3 = yzNumBox();
                 var f4 = yzSkSize();
-                table = $('#example').DataTable();
+
                 if(f1 == true && f2 == true && f3 == true &&f4==true){
+                  table = $('#example').DataTable();
                     var sumPriceA = document.getElementById("sumPriceA").value;
                     var sumCountA = document.getElementById("sumCountA").value;
                     var delPriceA = document.getElementById("delPriceA").value;
