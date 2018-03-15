@@ -56,7 +56,7 @@
 	</style>
     <script type="text/javascript">
 
-    var ckUuid_ye3,pktype;//全局变量
+    var ckUuid_ye3,pktype,courseUuidData,empUuidData,classroomUuid;//全局变量
 
     $(document).ready(function() {
 
@@ -83,6 +83,7 @@
                 success:function(result){
                 //步骤1_a1，完成下拉框L3
                 huiFunc1(result);
+			    courseUuidData = JSON.parse(result).data;
                 }
              
             });
@@ -101,6 +102,7 @@
                 success:function(result){
                 //步骤1_a1，在步骤1的ajax的回调函数
                 huiFuncL3(result);
+                classroomUuid = JSON.parse(result).data;
 //                alert("下拉框加载完成");
                 }
              
@@ -139,6 +141,7 @@
                         success:function(result){
                         //步骤1_a1，完成下拉框L3
                         huiFunc2(result);
+						empUuidData = JSON.parse(result).data;
                         }
                      
                     });
@@ -194,11 +197,6 @@
 
 
     </script>
-
-
-
-
-
 	<script>
 
 		var table_full;//全局变量
@@ -207,9 +205,137 @@
 
 			 /*第零步：把datatables插件的警告窗变成控制台打印*/
              $.fn.dataTable.ext.errMode = 'none';
-
+		//输入框验证
+		   function selectYZ(){
+			 function yz1 (){
+			   var j=0;
+               if(empUuidData!=undefined){
+                   for(var i=0;i<empUuidData.length;i++){
+                     if(empUuidData[i].empUuid==$("#L2ee").combobox('getValue')){
+                       j++;
+    				 }
+                   }
+               }
+               if(j==0||empUuidData==undefined){
+                 alert("所选老师无效，请选择");
+                 return false;
+               }else{
+                 return true;
+               }
+			 }
+			 function yz2(){
+			   var j=0;
+               if(classroomUuid!=undefined){
+                   for(var i=0;i<classroomUuid.length;i++){
+                     if(classroomUuid[i].uuid==$("#L3ee").combobox('getValue')){
+                       j++;
+                     }
+                   }
+               }
+               if(j==0||classroomUuid==undefined){
+                 alert("所选教室无效，请选择");
+                 return false;
+               }else{
+                 return true;
+               }
+			 }
+             function yz3(){
+			   var j = 0;
+               if(courseUuidData!=undefined){
+                   for(var i=0;i<courseUuidData.length;i++){
+                     if(courseUuidData[i].courseUuid==$("#L1ee").combobox('getValue')){
+                       j++;
+                     }
+                   }
+               }
+               if(j==0||courseUuidData==undefined){
+                 alert("选择课程无效，请选择");
+                 return false;
+			   }else{
+                 return true;
+               }
+             }
+             function yz4(){
+               var j = 0;
+               if(pktype!=undefined){
+                   for(var i=0;i<pktype.length;i++){
+                     if(pktype[i].pkType==$("#L4ee_dlg").combobox('getValue')){
+                       j++;
+                     }
+                   }
+               }
+               if(j==0||pktype==undefined){
+                 alert("选择上课类型无效，请选择");
+                 return false;
+               }else{
+                 return true;
+			   }
+             }
+             function yz5 (){
+                if($("#keLongTime").numberspinner("getValue")==""){
+                  alert("所选时长数无效，请选择");
+                  return false;
+                }else{
+                  return true;
+                }
+              }
+             function yz6 (){
+                if($("#keDateTime").datebox("getValue")==""){
+                  alert("所选开始日期无效，请选择");
+                  return false;
+                }else{
+                  return true;
+                }
+              }
+              function yz7 (){
+                if($("#keStartTime").timespinner("getValue")==""){
+                  alert("所选上课时间无效，请选择");
+                  return false;
+                }else{
+                  return true;
+                }
+              }
+              function yz8 (){
+                if($("#keCount").numberspinner("getValue")==""){
+                  alert("所选排课次数无效，请选择");
+                  return false;
+                }else{
+                  return true;
+                }
+              }
+              function yz9 (){
+                var j=0;
+                for(var i=0;i<$(".check-class input").length;i++){
+                    if($(".check-class input")[i].checked){
+                        j++;
+                    }
+                }
+                if(j==0){
+                  alert("重复周期无效,请选择");
+                  return false;
+                }else{
+                  return true;
+                }
+              }
+             var one = yz1();
+             var two = yz2();
+             var three = yz3();
+             var four = yz4();
+             var five = yz5();
+             var six = yz6();
+             var senven = yz7();
+             var eight = yz8();
+             var nine = yz9();
+            if(one&&two&&three&&four&&five&&six&&senven&&eight&&nine){
+               return true;
+			 }else{
+               return false;
+			 }
+		   }
 		//步骤1，编辑预览排课按钮事件
-    	$( "#viewPkBtn" ).click(function() { 
+    	$( "#viewPkBtn" ).click(function() {
+
+
         //要初始化一个对象，不然会报undifine未定义错误
             // var delRowData = {};
             //获取选择那一行的数据
@@ -253,27 +379,28 @@
                 // send_edit_data.seven = document.ffname.week7.checked;
                 send_edit_data.seven = document.getElementById("week7").checked;
                 // alert("seven值："+send_edit_data.seven);
-            send_edit_data.pkType = document.ffname.pkType.value;
+            send_edit_data.pkType = $("#L4ee_dlg").combobox('getValue');
 			/*验证下拉框*/
-            if(send_edit_data.courseUuid == ""||send_edit_data.empUuid==""||send_edit_data.classroomUuid==""){
-                alert("请选择下拉框的值");
-                return false;
-            }
-            $.ajax({
-                
+          	var YZ = selectYZ();
+          	console.log(YZ);
+          	if(YZ){
+              $.ajax({
+
                 url:"/sdpk/aaPaiKe?qqiu=listPreview",
                 type: "POST",
                 //data: JSON.stringify(param),
                 data: JSON.stringify(send_edit_data),
-                contentType: "application/json;charset=UTF-8", 
+                contentType: "application/json;charset=UTF-8",
                 success:function(result){
-                    var obj = JSON.parse(result);
-                alert(obj.message);
-                //步骤1_a1，在步骤1的ajax的回调函数
-                huiFunc(result);
+                  var obj = JSON.parse(result);
+                  alert(obj.message);
+                  //步骤1_a1，在步骤1的ajax的回调函数
+                  huiFunc(result);
                 }
-             
-            });
+
+              });
+			}
+
 
 
     });//end 1 外圈 submitForm
@@ -291,6 +418,7 @@
         bSort:true,
         "bLengthChange":false,
         scrollX :670,
+        "bDestroy": true,
         language: {
             "sProcessing": "处理中...",
             "sLengthMenu": "显示 _MENU_ 项结果",
@@ -516,6 +644,7 @@
                 //步骤1_a1，在步骤1的ajax的回调函数
                 huiEditFuncL3(result);
 //                alert("下拉框加载完成");
+              	classroomUuid = JSON.parse(result).data;
             }
 
         });
@@ -528,7 +657,6 @@
             var a2obj = {};
             a2obj = JSON.parse(result);
             var a2data = a2obj.data;
-
             //对话框重复一份
             $('#L1ee_dlg').combobox({
                 data: a2data,
@@ -572,6 +700,7 @@
             obj2 = JSON.parse(result);
             var a2data2 = obj2.data;
             //对话框重复一份
+
             $('#L2ee_dlg').combobox({
                 data: a2data2,
                 valueField: 'empUuid',

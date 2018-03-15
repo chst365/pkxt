@@ -1,0 +1,11 @@
+/* Less */
+#wrap {
+  color: #999;
+  width: 50%;
+}
+.wrap {
+  color: #ccc;
+}
+#wrap {
+  color: #666;
+}

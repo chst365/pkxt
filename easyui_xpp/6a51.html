@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>班级排课页面</title>
+    <script type="text/javascript" src="jquery-easyui-136/jquery.min.js"></script>
+
+    <script type="text/javascript" src="jquery-easyui-136/jquery.easyui.min.js"></script>
+    <script type="text/javascript" src="jquery-easyui-136/locale/easyui-lang-zh_CN.js"></script>
+    <script type="text/javascript" src="DataTables/datatables.js"></script>
+    <script type="text/javascript" src="../xppjs/jquery.serialize-object.js"></script>
+    <script type="text/javascript" src="../xppjs/jquery.cookie.js"></script>
+
+    <link rel="stylesheet" type="text/css" href="jquery-easyui-136/themes/gray/easyui.css"/>
+    <link rel="stylesheet" type="text/css" href="jquery-easyui-136/themes/icon.css"/>
+    <link rel="stylesheet" type="text/css" href="DataTables/datatables.css"/>
+    <link rel="stylesheet" type="text/css" href="../HMcode/HMcss/jquery.dataTables.min.css"/>
+    <link rel="stylesheet" type="text/css" href="../HMcode/HMcss/select.dataTables.min.css"/>
+    <link rel="stylesheet" type="text/css" href="../HMcode/HMcss/6a5.css"/>
+    <style>
+        .dataTables_wrapper .dataTables_info{
+            clear: none;
+            float: right;
+            padding-right: 20px;
+            margin-top:0;
+        }
+        .dataTables_wrapper .dataTables_paginate{
+            float: right;
+        }
+        .main-right {
+            width: 80%;
+        }
+        @media screen and (max-width: 1120px) {
+            .main-right {
+                width: 70.5%;
+            }
+        }
+        @media screen and (min-width: 1130px) {
+            .main-right {
+                width: 80%;
+            }
+        }
+        tbody tr:hover {
+            background-color: transparent;
+        }
+        .dataTables_wrapper .dataTables_paginate .paginate_button{
+            border:1px solid transparent;
+        }
+        .dataTables_wrapper .dataTables_paginate .paginate_button:hover{
+            border:1px solid transparent;
+        }
+        .dataTables_wrapper .dataTables_paginate .paginate_button:active{
+            box-shadow: none;
+        }
+        .dataTables_wrapper .dataTables_paginate .paginate_button.current, .dataTables_wrapper .dataTables_paginate .paginate_button.current:hover{
+            border:1px solid transparent;
+        }
+        .dataTables_wrapper .dataTables_paginate .paginate_button{
+            border:1px solid transparent;
+        }
+        .dataTables_wrapper .dataTables_paginate .paginate_button:hover{
+            border:1px solid transparent;
+        }
+        .dataTables_wrapper .dataTables_paginate .paginate_button:active{
+            box-shadow: none;
+        }
+        .dataTables_wrapper .dataTables_paginate .paginate_button.current, .dataTables_wrapper .dataTables_paginate .paginate_button.current:hover{
+            border:1px solid transparent;
+        }
+        table.dataTable.display tbody tr.even td.sorting_1{
+            background-color: white;
+        }
+        .alert-main p{
+            color: #4c4c4c;
+        }
+        #content02_tb3 label{
+            position:relative;
+        }
+        table.dataTable.display tbody tr.even>.sorting_1, table.dataTable.order-column.stripe tbody tr.even>.sorting_1{
+            background-color: #ffffff;
+        }
+    </style>
+
+    <script type="text/javascript">
+
+
+      $(function(){
+        $("#fa1").load(
+          function(){
+            var height;
+
+
+            height=$("#fa1").attr("height",height);
+            console.log(height)
+          }
+        );
+      });
+    </script>
+</head>
+<body>
+<iframe id="fa1" src="http://www.baidu.com" width="100%" height="100%">
+</iframe>
+<iframe id="fa2" src="http://mail.163.com" width="100%"height="100%">
+</iframe>
+</body>
+</html>
+</html>
