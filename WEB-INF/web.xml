@@ -48,12 +48,22 @@
 		<url-pattern>/aaQueKeAll</url-pattern>
 	</servlet-mapping>
 	<servlet>
+	
 		<servlet-name>ContrtextController</servlet-name>
 		<servlet-class>com.sdpk.controller.ContrtextController</servlet-class>
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>ContrtextController</servlet-name>
 		<url-pattern>/aaContrtext</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
+		<servlet-name>aaLogGXN</servlet-name>
+		<servlet-class>com.sdpk.controller.LogGXController</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>aaLogGXN</servlet-name>
+		<url-pattern>/aaLogGX</url-pattern>
 	</servlet-mapping>
 
 	<servlet>
@@ -436,5 +446,71 @@
 		<servlet-name>aaQueryMonthHead</servlet-name>
 		<url-pattern>/aaQueryMonthHead</url-pattern>
 	</servlet-mapping>
+	
+	<servlet>
+		<servlet-name>aaStuNameN</servlet-name>
+		<servlet-class>com.sdpk.queryOpen.controller.StuNameController</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>aaStuNameN</servlet-name>
+		<url-pattern>/aaStuName</url-pattern>
+	</servlet-mapping>
+	
+	<servlet>
+		<servlet-name>aaClaNameN</servlet-name>
+		<servlet-class>com.sdpk.queryOpen.controller.ClaNameController</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>aaClaNameN</servlet-name>
+		<url-pattern>/aaClaName</url-pattern>
+	</servlet-mapping>
+	
+	<servlet>
+		<servlet-name>aaStuKeXiaoN</servlet-name>
+		<servlet-class>com.sdpk.queryOpen.controller.StuKeXiaoController</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>aaStuKeXiaoN</servlet-name>
+		<url-pattern>/aaStuKeXiao</url-pattern>
+	</servlet-mapping>
+	
+	<servlet>
+		<servlet-name>aaTeacherNameN</servlet-name>
+		<servlet-class>com.sdpk.queryOpen.controller.TeacherNameController</servlet-class>
+	</servlet>
+  <servlet>
+    <servlet-name>KeDelBatchController</servlet-name>
+    <servlet-class>com.sdpk.queryOpen.controller.KeDelBatchController</servlet-class>
+  </servlet>
+
+	<servlet-mapping>
+		<servlet-name>aaTeacherNameN</servlet-name>
+		<url-pattern>/aaTeacherName</url-pattern>
+	</servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>KeDelBatchController</servlet-name>
+    <url-pattern>/servlet/KeDelBatchController</url-pattern>
+  </servlet-mapping>
+  
+   <servlet>
+  <servlet-name>aaKeDelBatchN</servlet-name>
+  <servlet-class>com.sdpk.queryOpen.controller.KeDelBatchController</servlet-class>
+ </servlet>
+ <servlet-mapping>
+  <servlet-name>aaKeDelBatchN</servlet-name>
+  <url-pattern>/aaKeDelBatch</url-pattern>
+ </servlet-mapping>
+	
+	<servlet>
+		<servlet-name>aaTeaKeXiaoN</servlet-name>
+		<servlet-class>com.sdpk.queryOpen.controller.TeaKeXiaoController</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>aaTeaKeXiaoN</servlet-name>
+		<url-pattern>/aaTeaKeXiao</url-pattern>
+	</servlet-mapping>
+
+
+
 
 </web-app>

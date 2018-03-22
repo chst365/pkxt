@@ -3,7 +3,7 @@
 <head>
     <meta name="content-type" content="text/html; charset=utf-8">
     <meta charset="UTF-8">
-    <title>树袋老师</title>
+    <title>树袋老师排课系统</title>
 
     <!-- idTabs链接文件 -->
     
@@ -106,15 +106,12 @@ margin:0px; padding:0;text-align:center;}
               {
                   //判断已经退出登陆
                   if($.cookie("rsList")==""){
-                      console.log("检测没有权限，重新登录或联系管理员");
                       window.location.href="login.html";
                   };
-            console.log("jquery里检测已经登陆");
             funUser();
               }
               else
               {
-               console.log("jquery里检测没有登陆");
                window.location.href="login.html";
               }
 
@@ -133,7 +130,6 @@ margin:0px; padding:0;text-align:center;}
 
             //取出cookie用户名ckUserName
             var ck_uName = $.cookie("ckUserName");
-            console.log("取出用户名"+ck_uName);
             $(".user-name").html(ck_uName);
                //一级菜单权限开始
         $( "#menu_1" ).hide();
@@ -148,7 +144,6 @@ margin:0px; padding:0;text-align:center;}
         //取cookie里的数组
         var viewArr = $.cookie("rsList").split(",");
         for (var i = 0; i < viewArr.length; i++) {
-        console.log("第"+i+"个："+viewArr[i]);   
         if(viewArr[i]=="A") {$( "#menu_1" ).show();}  
         if(viewArr[i]=="B") {$( "#menu_2" ).show();}
         if(viewArr[i]=="C") {$( "#menu_3" ).show();}
@@ -163,7 +158,6 @@ margin:0px; padding:0;text-align:center;}
 
         //二级权限开始
          $( "#menu_a1" ).hide();
-         console.log("进入了隐藏二级菜单!");
          $( "#menu_a2" ).hide();
          $( "#menu_a3" ).hide();
          $( "#menu_a4" ).hide();
@@ -204,6 +198,7 @@ margin:0px; padding:0;text-align:center;}
         $( "#menu_h6" ).hide();
         $( "#menu_h7" ).hide();//部门新增 权限
         $( "#menu_h8" ).hide();//部门管理 权限
+        $( "#menu_h9" ).hide();//部门管理 权限
         for (var i = 0; i < viewArr.length; i++) {
         // console.log("第"+i+"个："+viewArr[i]);
         if(viewArr[i]=="Aa") {$( "#menu_a5" ).show();} //我的今日课，老师
@@ -251,7 +246,7 @@ margin:0px; padding:0;text-align:center;}
         if(viewArr[i]=="Hf") {$( "#menu_h6" ).show();}
         if(viewArr[i]=="Hg") {$( "#menu_h7" ).show();}//部门新增 权限
         if(viewArr[i]=="Hh") {$( "#menu_h8" ).show();}//部门管理 权限
-                              
+        if(viewArr[i]=="Hi") {$( "#menu_h9" ).show();}//部门管理 权限
         }//end for
         //二级权限结束
 
@@ -499,6 +494,11 @@ margin:0px; padding:0;text-align:center;}
                  // alert("点击了角色的管理");
                  console.log("点击了部门的管理");
              });
+           $( "#menu_h9" ).click(function(){
+             document.getElementById('ifr8a9').src="easyui_xpp/8a9.html";
+             // alert("点击了角色的管理");
+             console.log("点击了部门的管理");
+           });
         //单击二级菜单结束
             };//end 方法 funUser
 
@@ -692,6 +692,7 @@ line-height: 28px;">宋瑛瑛</i>
                             <li><a id="menu_h6" href="#eight_6">角色的管理</a></li>
                             <li><a id="menu_h7" href="#eight_7">部门新增</a></li>
                             <li><a id="menu_h8" href="#eight_8">部门的管理</a></li>
+                            <li><a id="menu_h9" href="#eight_9">用户操作记录日志</a></li>
                         </ul>
 
                   </div>
@@ -834,6 +835,9 @@ line-height: 28px;">宋瑛瑛</i>
                         </div>
                         <div id="eight_8" >
                             <iframe id="ifr8a8"   style="box-sizing:border-box;overflow-x: scroll;overflow-y: hidden;min-width:1120px;width:100%;height: 850px;" frameborder="0"></iframe>
+                        </div>
+                        <div id="eight_9" >
+                            <iframe id="ifr8a9"   style="box-sizing:border-box;overflow-x: scroll;overflow-y: hidden;min-width:1120px;width:100%;height: 850px;" frameborder="0"></iframe>
                         </div>
                 </div>
                 

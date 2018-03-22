@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>跟踪表日志</title>
+    <script type="text/javascript" src="jquery-easyui-136/jquery.min.js"></script>
+    <script type="text/javascript" src="../xppjs/jquery.cookie.js"></script>
+    <script type="text/javascript" src="DataTables/datatables.js"></script>
+    <script type="text/javascript" src="jquery-easyui-136/jquery.easyui.min.js"></script>
+    <script type="text/javascript" src="jquery-easyui-136/locale/easyui-lang-zh_CN.js"></script>
+    <script type="text/javascript" src="../xppjs/jquery.serialize-object.js"></script>
+    <link  rel="stylesheet" type="text/css" href="DataTables/datatables.css"/>
+    <link  rel="stylesheet" type="text/css" href="jquery-easyui-136/themes/gray/easyui.css"/>
+    <link  rel="stylesheet" type="text/css" href="../HMcode/HMcss/8a9.css"/>
+    <style>
+        .dataTables_wrapper{
+            top:-67px;
+        }
+        .dataTables_wrapper .dataTables_info{
+            clear: none;
+            float: right;
+            padding-right: 20px;
+            margin-top:20px;
+        }
+        .dataTables_wrapper .dataTables_paginate{
+            float: right;
+        }
+        .dataTables_wrapper .dataTables_paginate .paginate_button{
+            border:1px solid transparent;
+        }
+        .dataTables_wrapper .dataTables_paginate .paginate_button:hover{
+            border:1px solid transparent;
+        }
+        .dataTables_wrapper .dataTables_paginate .paginate_button:active{
+            box-shadow: none;
+        }
+        .dataTables_wrapper .dataTables_paginate .paginate_button.current, .dataTables_wrapper .dataTables_paginate .paginate_button.current:hover{
+            border:1px solid transparent;
+        }
+        .dataTables_wrapper .dataTables_paginate .paginate_button{
+            border:1px solid transparent;
+        }
+        .dataTables_wrapper .dataTables_paginate .paginate_button:hover{
+            border:1px solid transparent;
+        }
+        .dataTables_wrapper .dataTables_paginate .paginate_button:active{
+            box-shadow: none;
+        }
+        .dataTables_wrapper .dataTables_paginate .paginate_button.current, .dataTables_wrapper .dataTables_paginate .paginate_button.current:hover{
+            border:1px solid transparent;
+        }
+        table.dataTable.display tbody tr.even td.sorting_1{
+            background-color: white;
+        }
+    </style>
+</head>
+<body>
+<div class="tab-con">
+    <div id="header_1" style="overflow: hidden;position: relative;z-index: 10;" >
+        <h2 class="tit-tit" style="float: left;padding-bottom: 0;line-height: 40px;">用户操作记录日志</h2>
+    </div>
+    <div class="btn-main" style="position: relative;z-index: 999;width:500px;">
+        <button id="delbutMore" class="btn-class del-btn"style="background-color: red;">批量删除</button>
+    </div>
+    <!--S--表格开始 -->
+    <table id="adm-user" class="display tab-mians" cellspacing="0" width="100%">
+        <thead class="tab-tit">
+        <tr>
+            <th class='th'style="min-width:60px;">
+                多选<input type="checkbox" class="checkall"style="display:none;" />
+            </th>
+            <th style="min-width:120px;">用户名</th>
+            <!-- <th>操作数据库表名</th> -->
+            <th style="min-width:120px;">菜单名</th>
+            <th style="min-width:120px;">学员名</th>
+            <th style="min-width:120px;">操作行为</th>
+            <th style="min-width:190px;">操作时间</th>
+            <th style="max-width:300px;word-wrap:break-word;">跟踪备注</th>
+        </tr>
+        </thead>
+        <tbody>
+        </tbody>
+        <tfoot class="tab-tit">
+        <tr>
+            <th class='th'style="min-width:60px;">
+                多选<input type="checkbox" class="checkall"style="display:none;" />
+            </th>
+            <th style="min-width:120px;">用户名</th>
+            <!-- <th>操作数据库表名</th> -->
+            <th style="min-width:120px;">菜单名</th>
+            <th style="min-width:120px;">学员名</th>
+            <th style="min-width:120px;">操作行为</th>
+            <th style="min-width:190px;">操作时间</th>
+            <th style="max-width:300px;word-wrap:break-word;">跟踪备注</th>
+        </tr>
+        </tfoot>
+    </table>
+    <!--E--表格结束 -->
+</div>
+</body>
+<script>
+  var listUrl,delUrl,tabData;
+  var remarkShowLength = 10;
+  function changeShowRemarks(obj) {//obj是td
+    console.log(11);
+    var content = $(obj).attr("content");
+    if (content != null && content != '') {
+      if ($(obj).attr("isDetail") == 'true') {//当前显示的是详细备注，切换到显示部分
+        //$(obj).removeAttr('isDetail');//remove也可以
+        $(obj).attr('isDetail', false);
+        $(obj).html(getPartialRemarksHtml(content));
+      } else {//当前显示的是部分备注信息，切换到显示全部
+        $(obj).attr('isDetail', true);
+        $(obj).html(getTotalRemarksHtml(content));
+      }
+    }
+  }
+  //部分备注信息
+  function getPartialRemarksHtml(remarks){
+    return remarks.substr(0,remarkShowLength) + '&nbsp;&nbsp;<a href="javascript:void(0);" ><b>...</b></a>';
+  }
+
+  //全部备注信息
+  function getTotalRemarksHtml(remarks){
+    return remarks + '&nbsp;&nbsp;<a href="javascript:void(0);" >收起</a>';
+  }
+  $(document).ready(function(){
+    //切换显示备注信息，显示部分或者全部
+
+    //按钮权限开始
+    function funBtn(){
+      $( "#delbutMore" ).hide();
+      var viewArr = $.cookie("rsList").split(",");
+      for (var i = 0; i < viewArr.length; i++) {
+        if(viewArr[i]=="Hi1") {$( "#delbutMore" ).show();}
+      }//end for
+    }
+    funBtn();
+      /*第零步：把datatables插件的警告窗变成控制台打印*/
+    $.fn.dataTable.ext.errMode = 'none';
+      /* url判断 */
+    listUrl = "/sdpk/aaLogGX?qqiu=list";
+      /* 第一步：展示列表数据 */
+    var allData = {};
+    $.ajax({
+      url:listUrl,
+      type:"GET",
+      data:JSON.stringify(allData),
+      contentType:"application/json;charset=UTF-8",
+      success:function (result) {
+        huidiao(result);
+      }
+    });
+
+    function huidiao(result){
+      var obj = JSON.parse(result);
+      var objData = obj.data;
+      console.log(objData);
+      $("#adm-user").dataTable().fnDestroy();
+      tabData = $("#adm-user").DataTable({
+        "dom":'frtpi',
+        "order": [[ 5, "desc" ]],
+        "bLengthChange":false,
+        "bAutoWidth":false,
+//                "aoColumns": [                          //设定各列宽度
+//                {"sWidth": "120px"},
+//                {"sWidth": "120px"},
+//                {"sWidth": "120px"},
+//                  {"sWidth": "120px"},
+//                  {"sWidth": "190px"},
+//                  {"sWidth": "300px"}],
+        bSort:true,
+        language: {
+          "sProcessing": "处理中...",
+          "sLengthMenu": "显示 _MENU_ 项结果",
+          "sZeroRecords": "没有匹配结果",
+          "sInfo": "共 _TOTAL_ 项",
+          "sInfoEmpty": "共 0 项",
+          "sInfoFiltered": "(由 _MAX_ 项结果过滤)",
+          "sInfoPostFix": "",
+          "sSearch": "搜索:",
+          "sUrl": "",
+          "sEmptyTable": "表中数据为空",
+          "sLoadingRecords": "载入中...",
+          "sInfoThousands": ",",
+          "oPaginate": {
+            "sFirst": "首页",
+            "sPrevious": "上页",
+            "sNext": "下页",
+            "sLast": "末页"
+          },
+          "oAria": {
+            "sSortAscending": ": 以升序排列此列",
+            "sSortDescending": ": 以降序排列此列"
+          }
+        },
+        "createdRow": function( row, objData, dataIndex ) {
+          if(objData.dataGxChina){
+            if(objData.dataGxChina.length > remarkShowLength){//只有超长，才有td点击事件
+              $(row).children('td').eq(5).attr('onclick','javascript:changeShowRemarks(this);');
+            }
+            $(row).children('td').eq(5).attr('content',objData.dataGxChina);
+          }
+
+        },
+        data:objData,
+        columns:[
+          {
+            "data": null,
+            "title": "多选"
+          },
+          {"data":"userName"},
+          // { "data":"tableName"},
+          { "data":"tableNameChina"},
+          { "data":"dataName"},
+          { "data":"userAction"},
+          { "data":"updateTime"},
+          { "data":"dataGxChina"}
+        ],
+        "columnDefs" : [
+          {
+            "type": "date",
+            "targets": 6,
+            "render": function (objData, type, full, meta) {
+              if(full.dataGxChina){
+                if (full.dataGxChina.length > remarkShowLength) {
+                  return getPartialRemarksHtml(full.dataGxChina);
+                }else{
+                  return full.dataGxChina;
+                }
+              }
+
+            }
+          },
+          {
+            "targets": 0,
+            "name": "状态",
+            "cellType": "th",
+            "orderDataType": "dom-text",
+            "orderSequence": [ "desc","asc", "asc" ],
+            "className": "my_class",
+            "contentPadding": "mmm",
+            "createdCell": function (td, cellData, rowData, row, col) {
+              $(td).context.innerHTML='<input class="checkchild" type="checkbox"/>';
+            }
+          }]
+      });
+
+    }
+      /* 第二步：对选中列表进行操作 */
+    var selTable = $("#adm-user").on("click","tr",function(){
+      if($(this).hasClass("selected")){
+        $(this).removeClass("selected")
+      }else{
+        $('tr.selected').removeClass('selected');
+        $(this).addClass("selected");
+      }
+    });
+      /* 第三步：删除按钮的事件 */
+    //批量删除功能
+    $('#delbutMore').click(function(){
+      var msg = "确定删除这些日志么？";
+      var msg1 = "请勾选至少一条排课信息！";
+      if($(".checkchild:checkbox:checked").length==0){
+        alert(msg1);
+        return false;
+      }else{
+        if(confirm(msg)){
+          var uuidList = [];
+          var send_data = {};
+          for(var i=0;i<$(".checkchild:checkbox:checked").length;i++) {
+            uuidList.push(tabData.row($(".checkchild:checkbox:checked").parent().parent()[i]).data().uuid);
+          }
+          send_data.uuidList = uuidList;
+          console.log(send_data);
+          $.ajax({
+            url:"/sdpk/aaLogGX?qqiu=deleteBatch",
+            type: "POST",
+            data: JSON.stringify(send_data),
+            contentType: "application/json;charset=UTF-8",
+            success:function(result){
+              for(var i = $(".checkchild:checkbox:checked").length-1;i>=0;i--){
+                tabData.row($(".checkchild:checkbox:checked").parent().parent()[i]).remove().draw( false );
+              }
+              var obj = JSON.parse(result);
+              alert(obj.message);
+            }
+          });//end $.ajax
+        }
+      }
+    })
+  });
+</script>
+</html>

@@ -105,10 +105,16 @@
 		},{
 			"id":"Cb3",
 			"text":"查看排课",
-			"attributes":{
-				"p1":"Custom Attribute1",
-				"p2":"Custom Attribute2"
-			}
+			"children":[{
+				"id":"Cb31",
+				"text":"调课"
+			},{
+				"id":"Cb32",
+				"text":"删除"
+			},{
+				"id":"Cb33",
+				"text":"批量删除"
+			}]
 		}]
 	},{
 		"id":"Cc",
@@ -295,6 +301,13 @@
 		},{
 			"id":"Hh2",
 			"text":"删除"
+		}]
+	},{
+		"id":"Hi",
+		"text":"用户操作记录日志",
+		"children":[{
+			"id":"Hi1",
+			"text":"批量删除"
 		}]
 	}]
 }

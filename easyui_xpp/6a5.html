@@ -429,7 +429,9 @@
                 var send_edit_data = {};
                 // send_edit_data.uuid = delRowData.uuid;
                 send_edit_data.id = "001";
-                send_edit_data.claUuid = $.cookie('UidCla');
+                // send_edit_data.claUuid = $.cookie('UidCla');//排课功能页，班级uuid从选择框里获取0316
+                send_edit_data.claUuid = $("#L0_cla").combobox('getValue');
+                
                 send_edit_data.courseUuid = $("#L1ee").combobox('getValue');
                 send_edit_data.empUuid = $("#L2ee").combobox('getValue');
                 send_edit_data.classroomUuid = $("#L3ee").combobox('getValue');
@@ -833,7 +835,8 @@
                 // var param = $("#ff").serializeObject();
                 var send_edit_data = {};
                 send_edit_data.uuid = delRowData.uuid;
-                send_edit_data.claUuid = $.cookie('UidCla');
+                // send_edit_data.claUuid = $.cookie('UidCla');//班级uuid从下拉框里选0316
+                send_edit_data.claUuid = $("#L0_cla").combobox('getValue');
                 send_edit_data.courseUuid = $("#L1ee_dlg").combobox('getValue');
                 send_edit_data.empUuid = $("#L2ee_dlg").combobox('getValue');
                 send_edit_data.classroomUuid = $("#L3ee_dlg").combobox('getValue');

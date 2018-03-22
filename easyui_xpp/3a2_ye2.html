@@ -70,8 +70,22 @@
     <!-- 11月09新增start -->
 
     <script type="text/javascript">
-    var table_ye2,a2data,curD;//全局变量
+    var table_ye2,a2data,curD,tab;//全局变量
     $(document).ready(function() {
+          //按钮权限开始
+          function funBtn(){
+            $( "#delbutMore" ).hide();
+            $( "#opener" ).hide();
+            $( "#delbut" ).hide();
+
+            var viewArr = $.cookie("rsList").split(",");
+            for (var i = 0; i < viewArr.length; i++) {
+              if(viewArr[i]=="Cb31") {$( "#opener" ).show();}
+              if(viewArr[i]=="Cb32") {$( "#delbut" ).show();}
+              if(viewArr[i]=="Cb33") {$( "#delbutMore" ).show();}
+            }//end for
+          }
+          funBtn();
         /*第零步：把datatables插件的警告窗变成控制台打印*/
         $.fn.dataTable.ext.errMode = 'none';
 //------------以下部分是修改标题栏信息-start-----------
@@ -188,10 +202,12 @@
     a2obj = JSON.parse(result);
     var a2data = a2obj.data;
     console.log(a2data);
+    $("#paike_biao").dataTable().fnDestroy();
     table_ye2 = $('#paike_biao').DataTable( {
         bSort:true,
         "dom":'frtpi',
         "bLengthChange":false,
+        "bDestroy":true,
         scrollX :670,
         language: {
             "sProcessing": "处理中...",
@@ -222,6 +238,11 @@
         scrollY:false,
         data: a2data,
         columns: [
+          {
+            "data": null,
+            //                    "searchable": true,
+            "title": "多选"
+          },
             { "data": "courseName" },
             { "data": "pkTypeName" },
             { "data": "keDateTime" },
@@ -230,7 +251,19 @@
             { "data": "empName" },
             { "data": "croomName" },
             { "data": "keLongTime" }
-        ]
+        ],
+      "columnDefs":[{
+        "targets": 0,
+        "name": "状态",
+        "cellType": "th",
+        "orderDataType": "dom-text",
+        "orderSequence": [ "desc","asc", "asc" ],
+        "className": "my_class",
+        "contentPadding": "mmm",
+        "createdCell": function (td, cellData, rowData, row, col) {
+          $(td).context.innerHTML='<input class="checkchild" type="checkbox"/>';
+        }
+      }]
     } );
         //步骤2，列表选择
         // var selectTable = $('#paike_biao tbody tr').click(function () {
@@ -259,6 +292,52 @@
                 $(this).addClass('selected');
             }//end if
         })
+        //批量删除功能
+        $('#delbutMore').click(function(){
+        var msg = "确定删除这些排课信息么？";
+        var msg1 = "请勾选至少一条排课信息！";
+        var msg2 = "包含已过期课程，不可删除！";
+        if($(".checkchild:checkbox:checked").length==0){
+          alert(msg1);
+          return false;
+        }else{
+            var today = new Date().toLocaleDateString().split('/');
+            for(var i=1;i<today.length;i++){
+              today[i]<10 ? today[i]='0'+today[i] : '';
+            }
+            today = today.join('');
+            var keDateTime,j = 0;
+            console.log(tab);
+            for(var i=0;i<$(".checkchild:checkbox:checked").length;i++){
+              !tab ? keDateTime = table_ye2.row($(".checkchild:checkbox:checked").parent().parent()[i]).data().keDateTime.split('-').join('') : keDateTime = curD.row($(".checkchild:checkbox:checked").parent().parent()[i]).data().keDateTime.split('-').join('');
+              keDateTime < today ? j++ : '';
+            }
+            if(j){
+              alert(msg2);
+            }else if(confirm(msg)){
+              var uuidList = [];
+              var send_data = {};
+              for(var i=0;i<$(".checkchild:checkbox:checked").length;i++) {
+                !tab ? uuidList.push(table_ye2.row($(".checkchild:checkbox:checked").parent().parent()[i]).data().uuid) : uuidList.push(curD.row($(".checkchild:checkbox:checked").parent().parent()[i]).data().uuid);
+              }
+              send_data.uuidList = uuidList;
+              $.ajax({
+                url:"/sdpk/aaKeDelBatch?qqiu=deleteBatch",
+                type: "POST",
+                data: JSON.stringify(send_data),
+                contentType: "application/json;charset=UTF-8",
+                success:function(result){
+                  for(var i = $(".checkchild:checkbox:checked").length-1;i>=0;i--){
+                    !tab ? table_ye2.row($(".checkchild:checkbox:checked").parent().parent()[i]).remove().draw( false ) : curD.row($(".checkchild:checkbox:checked").parent().parent()[i]).remove().draw( false );
+                  }
+                  var obj = JSON.parse(result);
+                  alert(obj.message);
+                  window.location.reload();
+                }
+              });//end $.ajax
+            }
+        }
+      })
         //步骤3，删除按钮单击事件
         $('#delbut').click( function () {
             var msg = "确定删除此条信息么？";
@@ -288,7 +367,6 @@
                         curD.ajax.reload();
                         var obj = JSON.parse(result);
                         alert(obj.message);
-
                     }
 
                 });//end $.ajax
@@ -497,6 +575,7 @@
             onSelect:function (date) {
                 var curYear = date.getFullYear();
                 var curMonth = date.getMonth()+1;
+                tab = 1;
                 if(curMonth<10){
                     curMonth = "0"+curMonth;
                 }
@@ -523,9 +602,10 @@
                     currTable= a2data[arrIndex[i]];
                     xppArr.push(currTable);
                 }
-
+                     $("#paike_biao").dataTable().fnDestroy();
                      curD = $('#paike_biao').DataTable( {
                         "dom":'frtpi',
+                        "bDestroy":true,
                         "bLengthChange":false,
                         language: {
                             "sProcessing": "处理中...",
@@ -556,6 +636,11 @@
 //                       scrollX: 690,
                        data: xppArr,
                         columns: [
+                          {
+                            "data": null,
+                            //                    "searchable": true,
+                            "title": "多选"
+                          },
                             { "data": "courseName" },
                             { "data": "pkTypeName" },
                             { "data": "keDateTime" },
@@ -564,22 +649,20 @@
                             { "data": "empName" },
                             { "data": "croomName" },
                             { "data": "keLongTime" }
-                        ]
+                        ],
+                       "columnDefs":[{
+                         "targets": 0,
+                         "name": "状态",
+                         "cellType": "th",
+                         "orderDataType": "dom-text",
+                         "orderSequence": [ "desc","asc", "asc" ],
+                         "className": "my_class",
+                         "contentPadding": "mmm",
+                         "createdCell": function (td, cellData, rowData, row, col) {
+                           $(td).context.innerHTML='<input class="checkchild" type="checkbox"/>';
+                         }
+                       }]
                     } );
-                //步骤2，列表选择
-                // var selectTable = $('#paike_biao tbody tr').click(function () {
-                //     // alert("选择了");
-                //     if ( $(this).hasClass('selected') ) {
-                //         $(this).removeClass('selected');
-                //         console.log(1);
-                //     }
-                //     else {
-                //         curD.$('tr.selected').removeClass('selected');
-                //         $(this).addClass('selected');
-                //         console.log(2);
-                //     }//end if
-
-                // } );//end 2 外圈 $('#example tbody').on
 
                 //步骤3，删除按钮单击事件
                 $('#delbut').click( function () {
@@ -983,6 +1066,7 @@
             <div id="ye_4_blank"></div>
 
             <div id="ye_5_content03_list" class="tab-tab">
+                <button id="delbutMore" class="btn-class del-btn"style="margin-left:10px;">批量删除</button>
                 <button id="delbut" class="btn-class del-btn">删除</button>
                 <button id="opener" class="btn-class">调课</button>
 
@@ -990,6 +1074,9 @@
                     <!--start 表头 -->
                     <thead class="tab-tit">
                     <tr>
+                        <th class='th'style="min-width:60px;">
+                            多选<input type="checkbox" class="checkall"style="display:none;" />
+                        </th>
                         <th style="min-width:90px;">课程名称</th>
                         <th style="min-width:65px;">类别</th>
                         <th style="min-width:110px;">上课日期</th>
@@ -1004,6 +1091,9 @@
                     <!-- start 表尾 -->
                     <tfoot class="tab-tit">
                     <tr>
+                        <th class='th'style="min-width:60px;">
+                            多选<input type="checkbox" class="checkall"style="display:none;" />
+                        </th>
                         <th style="min-width:90px;">课程名称</th>
                         <th style="min-width:65px;">类别</th>
                         <th style="min-width:110px;">上课日期</th>
